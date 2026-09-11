@@ -44,9 +44,9 @@ This lab should take approximately **60** minutes to complete.
 1. In the **Add Namespaces to Display** dialog box, in the list of namespaces, select **\\\contoso.com\Root**, and then select **OK**.
 1. In the navigation pane, right-click or access the context menu for **Replication**, and then select **Add Replication Groups to Display**.
 1. In the **Add Replication Groups to Display** dialog box, in the **Replication groups** section, select **Branch1**, and then select **OK**.
-1. In the navigation pane, expand the **\\\contoso.com\Root** namespace, and then select the **Data** folder.
+1. In the navigation pane, expand **Namespaces**, expand the **\\\contoso.com\Root** namespace, and then select the **Data** folder.
 1. In the details pane, verify that the **Data** folder has two referrals to the **Data** folder on **SEA-SVR1** and **SEA-SVR2**.
-1. In the navigation pane, select **Branch1**.
+1. In the navigation pane, expand **Replication**, and then select **Branch1**.
 1. In the details pane, verify that the **S:\\Data** folder on **SEA-SVR1** and on **SEA-SVR2** are members of the **Branch1** replication group.
 
    >**Note:** DFS Replication replicates the content between the **S:\\Data** folders on **SEA-SVR1** and **SEA-SVR2**.
@@ -75,12 +75,13 @@ This lab should take approximately **60** minutes to complete.
 
    >**Note:** Use the same region for deploying all resources in this lab.
 
+   - Primary service: **Azure Files**
    - Redundancy: **Locally-redundant storage (LRS)**
 
 1. Accept the default values for all other settings, select **Review**, and then select **Create**.
 1. After the storage account is created, on the **Deployment** page, select **Go to resource**.
-1. On the **storage account** page, select **Storage browser**, select **File shares** menu and then select **+ File share**.
-1. On the **New file share** tab, enter **share1** in the **Name** text box, and then select **Create**.
+1. On the **storage account** page, select **Storage browser**, select the **Classic file shares** menu, and then select **Add classic file share**.
+1. On the **New classic file share** tab, enter **share1** in the **Name** text box, select **Review + create**, and then select **Create**.
 
 ### Task 2: Use an Azure file share
 
@@ -89,13 +90,13 @@ This lab should take approximately **60** minutes to complete.
 1. On the **Upload files** tab, browse to **C:\\Labfiles\\Lab05\\File1.txt**, select **Upload**, and when the upload is complete, close the **Upload files** tab.
 1. Browse back to the **File shares** menu, select the elipsis of **share1** and then, on the list displayed, select **View snapshots**.
 1. On the **File share snapshots** page, select **Add snapshot** and click **Ok**.
-1. Browse back to the **File shares** menu, select the box representing **share1** and select **Connect**, select **Show Script**, use the **Copy to clipboard** button to copy the script, and then close the **Connect** tab.
+1. Browse back to the **Classic file shares** menu, select **share1**, and then, on the **share1** page, select **Connect**. Select **Show Script**, use the **Copy to clipboard** button to copy the script, and then close the **Connect** tab.
 1. On **SEA-ADM1**, switch to the **Windows PowerShell ISE** window, open another tab in the script pane, and paste the copied script into it.
 1. Review the content of the script, and then execute it by selecting the **Run Script** icon in the toolbar or by pressing F5. 
 
    >**Note:** The script mounted the Azure file share to drive letter **Z**.
 
-1. On the taskbar, right-click or access the context menu for File Explorer, select **File Explorer**, and then, in the **Quick Access** text box, type **Z:\**, and then press Enter.
+1. On the taskbar, select **File Explorer**. In File Explorer, enter **Z:\** in the address bar, and then press Enter.
 1. Verify that the file **File1.txt** appears in the details pane. This is the file that you uploaded to the Azure file share.
 1. Double-click or select **File1.txt**, and then press Enter to open the file in Notepad. 
 1. Use Notepad to modify the file content by appending your name in the last line, save the change, and close Notepad.
@@ -106,13 +107,13 @@ This lab should take approximately **60** minutes to complete.
 
 ### Task 3: Deploy Storage Sync Service and a File Sync group
 
-1. On **SEA-ADM1**, in the Azure portal, in the **Search resources, services, and docs** text box in the toolbar, search for and select **Azure File Sync**.
-1. On the **Basics** tab of the **Deploy File Sync** page, in the **Resource Group** drop-down list, select **AZ802-L0501-RG**.
+1. On **SEA-ADM1**, in the Azure portal, in the **Search resources, services, and docs** text box in the toolbar, search for and select **Storage Sync Services**, and then select **Create**.
+1. On the **Basics** tab of the **Deploy Azure File Sync** page, in the **Resource Group** drop-down list, select **AZ802-L0501-RG**.
 1. In the **Storage Sync Service name** text box, enter **FileSync1**. 
 1. In the **Region** drop-down list, select the same region in which you created the storage account. 
 1. On the **Basics** tab of the **Deploy File Sync** page, select **Review + Create** and **Create**.
 1. On the **Deployment** blade, once the File Sync is provisioned, select **Go to resource**.
-1. On the **FileSync1** **Storage Sync Service** page, select **Sync groups**, and then select **+ Sync group** to create a new File Sync group.
+1. On the **FileSync1** **Storage Sync Service** page, select **Sync groups**, and then select **Create a sync group**.
 1. On the **Sync group** page, enter **Sync1** in the **Sync group name** text box.
 1. Select **Select storage account**, and then, on the **Choose storage account** page, select the storage account that you created. 
 
@@ -137,6 +138,9 @@ This lab should take approximately **60** minutes to complete.
    >**Note:** Monitor the script execution. This should take about 3 minutes.
 
 1. When prompted with a **WARNING** message to sign in, copy the nine-character code in the warning message to the Clipboard.
+
+   >**Important:** Don't press **Ctrl+C** while the script is running because this cancels the script. Select the device code, right-click the selected text, and then select **Copy**. If you accidentally cancel the script, run it again by pressing F5 and use the new device code.
+
 1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://microsoft.com/devicelogin`.
 1. In Microsoft Edge, in the **Enter code** dialog box, paste the code you copied into Clipboard, and then, if needed, sign in with your Azure credentials, on the page displaying the message 
 **Are you trying to sign in to Microsoft Azure PowerShell?**, select **Continue**, and then close the Microsoft Edge tab you opened in the previous step.
@@ -159,6 +163,9 @@ This lab should take approximately **60** minutes to complete.
    >**Note:** Monitor the script execution. This should take about 3 minutes.
 
 1. When prompted with a **WARNING** message to sign in, copy the nine-character code in the warning message to the Clipboard.
+
+   >**Important:** Don't press **Ctrl+C** while the script is running because this cancels the script. Select the device code, right-click the selected text, and then select **Copy**. If you accidentally cancel the script, run it again by pressing F5 and use the new device code.
+
 1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://microsoft.com/devicelogin`.
 1. In Microsoft Edge, in the **Enter code** dialog box, paste the code you copied into Clipboard, and then, if needed, sign in with your Azure credentials, on the page displaying the message 
 **Are you trying to sign in to Microsoft Azure PowerShell?**, select **Continue**, and then close the Microsoft Edge tab you opened in the previous step.
@@ -187,7 +194,9 @@ This lab should take approximately **60** minutes to complete.
 
 1. On **SEA-ADM1**, in the Azure portal, on the **Sync1** sync group page, select **SEA-SVR2.Contoso.com** in the **server endpoints** section.
 1. In the Server Endpoint Properties pane, select **Enabled** in the **Cloud Tiering** section.
-1. In the **Always preserve the specified percentage of free space on the volume** text box, enter **90** and set **Date policy** to **Enabled**. In the **Only cache files that were accessed or modified within the specified number of days** text box, enter **14**, and then select **Save**.
+1. In the **Tiering policies** section, in the **Tier cool files to the cloud when less than** text box, enter **90** as the percentage of free space threshold.
+1. Enable **Date policy**, and enter **14** for the number of days. Leave **Recall setting** at its default value.
+1. Select **Save**.
 
    >**Note:** After some time, files on **SEA-SVR2** would be automatically tiered. You will trigger this process by using PowerShell.
 

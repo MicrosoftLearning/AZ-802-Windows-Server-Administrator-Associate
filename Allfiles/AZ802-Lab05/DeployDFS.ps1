@@ -12,6 +12,21 @@ Invoke-Command -ComputerName 'SEA-SVR2.contoso.com' -ScriptBlock {
     Format-Volume -DriveLetter S -FileSystem NTFS
 }
 
+$administrativeShares = '\\SEA-SVR1.contoso.com\S$', '\\SEA-SVR2.contoso.com\S$'
+foreach ($administrativeShare in $administrativeShares) {
+    $shareAvailable = $false
+    for ($attempt = 1; $attempt -le 12; $attempt++) {
+        if (Test-Path -LiteralPath $administrativeShare) {
+            $shareAvailable = $true
+            break
+        }
+        Start-Sleep -Seconds 5
+    }
+    if (-not $shareAvailable) {
+        throw "The administrative share $administrativeShare wasn't available after 60 seconds."
+    }
+}
+
 New-Item -Type Directory -Path '\\SEA-SVR1.contoso.com\S$\Root'
 New-Item -Type Directory -Path '\\SEA-SVR1.contoso.com\S$\Data'
 New-Item -Type Directory -Path '\\SEA-SVR2.contoso.com\S$\Data'
