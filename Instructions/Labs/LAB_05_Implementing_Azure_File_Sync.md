@@ -23,7 +23,7 @@ This lab should take approximately **60** minutes to complete.
 ### Task 1: Deploy DFS
 
 1. Connect to **SEA-ADM1**, and then, if needed, sign in with the credentials provided by the instructor.
-1. On **SEA-ADM1**, on the **Start** menu, select **Windows PowerShell (Admin)**.
+1. On **SEA-ADM1**, select **Start**, enter **Windows PowerShell**, display its context-sensitive menu, and then select **Run as administrator**.
 1. In the **Windows PowerShell** console, enter the following, and then press Enter to install Distributed File System (DFS) management tools:
 
    ```powershell
@@ -81,7 +81,12 @@ This lab should take approximately **60** minutes to complete.
 1. Accept the default values for all other settings, select **Review**, and then select **Create**.
 1. After the storage account is created, on the **Deployment** page, select **Go to resource**.
 1. On the **storage account** page, select **Storage browser**, select the **Classic file shares** menu, and then select **Add classic file share**.
-1. On the **New classic file share** tab, enter **share1** in the **Name** text box, select **Review + create**, and then select **Create**.
+1. On the **New classic file share** tab, enter **share1** in the **Name** text box.
+1. In the **Backup** section, clear the **Enable backup (recommended)** checkbox.
+
+   >**Note:** Leaving this option enabled automatically provisions a Recovery Services vault and applies a protection lock to the storage account, which you don't need for this lab and which prevents the storage account from being deleted during cleanup.
+
+1. Select **Review + create**, and then select **Create**.
 
 ### Task 2: Use an Azure file share
 
@@ -201,21 +206,32 @@ This lab should take approximately **60** minutes to complete.
    >**Note:** After some time, files on **SEA-SVR2** would be automatically tiered. You will trigger this process by using PowerShell.
 
 1. On **SEA-ADM1**, switch to the **Windows PowerShell ISE** window:
-1. In the **Windows PowerShell ISE**, in the console pane, trigger tiering immediately by entering the following commands and pressing Enter after each:
+1. In the **Windows PowerShell ISE** script pane, open a new tab, enter the following script, and then trigger tiering immediately by executing it by selecting the **Run Script** icon in the toolbar or by pressing F5.
+
+   >**Note:** This script uses `Invoke-Command` to run these commands on **SEA-SVR2**. Unlike `Enter-PSSession`, which only redirects commands you type interactively, `Invoke-Command` runs the entire script block on the remote computer and returns you to your local prompt automatically, which is why it's used here instead.
 
    ```powershell
-   Enter-PSSession -computername SEA-SVR2
-   fsutil file createnew S:\Data\report1.docx 254321098
-   fsutil file createnew S:\Data\report2.docx 254321098
-   fsutil file createnew S:\Data\report3.docx 254321098
-   fsutil file createnew S:\Data\report4.docx 254321098
-   Import-Module "C:\Program Files\Azure\StorageSyncAgent\StorageSync.Management.ServerCmdlets.dll"
-   Invoke-StorageSyncCloudTiering -Path S:\Data 
+   $srvName = 'SEA-SVR2'
+   $dataPath = 'S:\Data'
+
+   Invoke-Command -ComputerName $srvName -ArgumentList $dataPath -ScriptBlock {
+       param($dataPath)
+       Write-Output "Step 1/3: Creating test files in $dataPath..."
+       1..4 | ForEach-Object {
+           fsutil file createnew "$dataPath\report$_.docx" 254321098
+       }
+       Write-Output "Step 2/3: Importing Storage Sync module..."
+       Import-Module "C:\Program Files\Azure\StorageSyncAgent\StorageSync.Management.ServerCmdlets.dll"
+       Write-Output "Step 3/3: Triggering cloud tiering..."
+       Invoke-StorageSyncCloudTiering -Path $dataPath
+   }
    ```
 1. On **SEA-ADM1**, switch to the File Explorer window displaying the content of the **\\\\SEA-SVR2\\Data** folder.
 1. In the File Explorer window, add the **Attributes** column in the details pane by right-clicking or accessing the context menu for the **Title** column in the details pane; for example, in the **Name** column, select **More**, select the **Attributes** checkbox, and then select **OK**.
 1. Drag the **Attributes** column to be next to the **Name** column, and then note the file dates and their attributes.
 1. Identify files with the attribute **L**, **M**, and **O**, which indicate that the tiering took place. 
+
+   >**Note:** Cloud tiering can only convert a local file into a placeholder after that file has finished uploading to the Azure file share, so the test files you just created won't show tiered attributes until their sync to the cloud completes. If they still show as ordinary files, wait a few minutes for the upload to finish, and then press F5 in File Explorer to refresh the view.
 
 ## Exercise 5: Troubleshooting replication issues
 
@@ -253,19 +269,25 @@ This lab should take approximately **60** minutes to complete.
 
 1. On **SEA-ADM1**, switch to the Microsoft Edge window displaying the Azure portal and browse to the **FileSync1 Storage Sync Service** page.
 1. In the **Storage Sync Service** page, select **Registered Servers**.
-1. In the details pane, right-click or access the context menu for **SEA-SVR2.Contoso.com**, and then select **Unregister server**.
+1. In the details pane, select the ellipsis for **SEA-SVR2.Contoso.com**, and then select **Unregister server**.
 1. In the Unregister server pane, enter **SEA-SVR2.Contoso.com** in a text box, and then select **Unregister**.
 1. In Storage Sync Service pane, select **Registered Servers**.
-1. In the details pane, right-click or access the context menu for **SEA-SVR1.Contoso.com**, and then select **Unregister server**. 
+1. In the details pane, select the ellipsis for **SEA-SVR1.Contoso.com**, and then select **Unregister server**. 
 1. In the Unregister server pane, enter **SEA-SVR1.Contoso.com** in a text box, and then select **Unregister**.
 1. Wait until the registration for both servers is removed.
 1. In the Storage Sync Service pane, select **Sync groups**, and then in the details pane, select **Sync1**.
-1. In the Sync1 pane, right-click or access the context menu for **share1** in the **cloud endpoints** section, select **Delete**, and then select **OK**.
+1. In the Sync1 pane, select the ellipsis for **share1** in the **cloud endpoints** section, select **Delete**, and then select **OK**.
 1. Wait until **share1** is deleted.
-1. Select **Delete**, and then select **OK**.
+1. Browse back to the **FileSync1** **Storage Sync Service** page, select **Sync groups**, select the ellipsis for **Sync1**, and then select **Delete**.
+1. In the confirmation dialog box, select **Yes** to delete the sync group.
+1. In the navigation pane, select **All resources**, and then select the Azure storage account that you created in this lab.
+1. In the navigation pane of the storage account, select **Locks**, and verify that no locks are listed.
+
+   >**Note:** If a lock is listed, select it, select **Delete**, and confirm the deletion before you continue. A lock here would prevent the storage account from being deleted in a later step.
+
 1. In the navigation pane, select **All resources**.
 1. In the details pane, select **FileSync1** and the Azure storage account that you created in this lab.
-1. In the Delete Resources pane, select **Delete**, enter **yes** in a text box, and then select **Delete**.
+1. Select **Delete**, in the Delete Resources pane, enter **delete** in the text box, and then select **Delete**.
 1. In the navigation pane, select **Resource groups**.
 1. In the details pane, select **AZ802-L0501-RG**, select **Delete resource group**, enter **AZ802-L0501-RG**, and then select **Delete**.
 
