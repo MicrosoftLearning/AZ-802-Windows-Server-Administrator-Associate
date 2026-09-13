@@ -23,7 +23,7 @@ This lab should take approximately **60** minutes to complete.
 ### Task 1: Deploy DFS
 
 1. Connect to **SEA-ADM1**, and then, if needed, sign in with the credentials provided by the instructor.
-1. On **SEA-ADM1**, on the **Start** menu, select **Windows PowerShell**.
+1. On **SEA-ADM1**, on the **Start** menu, select **Windows PowerShell (Admin)**.
 1. In the **Windows PowerShell** console, enter the following, and then press Enter to install Distributed File System (DFS) management tools:
 
    ```powershell
@@ -90,7 +90,7 @@ This lab should take approximately **60** minutes to complete.
 1. On the **Upload files** tab, browse to **C:\\Labfiles\\Lab05\\File1.txt**, select **Upload**, and when the upload is complete, close the **Upload files** tab.
 1. Browse back to the **File shares** menu, select the elipsis of **share1** and then, on the list displayed, select **View snapshots**.
 1. On the **File share snapshots** page, select **Add snapshot** and click **Ok**.
-1. Browse back to the **Classic file shares** menu, select **share1**, and then, on the **share1** page, select **Connect**. Select **Show Script**, use the **Copy to clipboard** button to copy the script, and then close the **Connect** tab.
+1. Browse back to the **Classic file shares** menu, select the elipsis of **share1** and then, on the list displayed, select **Connect**. Select **Show Script**, use the **Copy to clipboard** button to copy the script, and then close the **Connect** tab.
 1. On **SEA-ADM1**, switch to the **Windows PowerShell ISE** window, open another tab in the script pane, and paste the copied script into it.
 1. Review the content of the script, and then execute it by selecting the **Run Script** icon in the toolbar or by pressing F5. 
 
