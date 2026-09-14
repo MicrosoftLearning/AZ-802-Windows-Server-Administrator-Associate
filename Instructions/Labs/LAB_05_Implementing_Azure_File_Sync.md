@@ -280,11 +280,6 @@ This lab should take approximately **60** minutes to complete.
 1. Wait until **share1** is deleted.
 1. Browse back to the **FileSync1** **Storage Sync Service** page, select **Sync groups**, select the ellipsis for **Sync1**, and then select **Delete**.
 1. In the confirmation dialog box, select **Yes** to delete the sync group.
-1. In the navigation pane, select **All resources**, and then select the Azure storage account that you created in this lab.
-1. In the navigation pane of the storage account, select **Locks**, and verify that no locks are listed.
-
-   >**Note:** If a lock is listed, select it, select **Delete**, and confirm the deletion before you continue. A lock here would prevent the storage account from being deleted in a later step.
-
 1. In the navigation pane, select **All resources**.
 1. In the details pane, select **FileSync1** and the Azure storage account that you created in this lab.
 1. Select **Delete**, in the Delete Resources pane, enter **delete** in the text box, and then select **Delete**.
