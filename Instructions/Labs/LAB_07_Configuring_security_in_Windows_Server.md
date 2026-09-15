@@ -154,7 +154,7 @@ This lab should take approximately **40** minutes to complete.
 
 1. Switch to the console session to **SEA-SVR1** and then, if needed, sign in with the credentials provided by the instructor.
 
-   > **Note:** You will be prompted to change your password, as a result of running in the previous exercise the script that enables password expiration. Choose an arbitrary password and use it throughout the remainder of the lab.
+   > **Note:** You may be prompted to change your password. If prompted, choose an arbitrary password and use it throughout the remainder of the lab.
 
 1. Once you sign in, to access the Windows PowerShell command prompt, at the **SConfig** menu prompt, enter **15** and press Enter.
    
