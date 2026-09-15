@@ -86,16 +86,12 @@ This lab should take approximately **90** minutes to complete.
 1. In the **Windows PowerShell** console, enter the following command and then press Enter to download the latest version of Windows Admin Center:
 	
    ```powershell
-   $parameters = @{
-     Source = "https://aka.ms/WACdownload"
-     Destination = ".\WindowsAdminCenter.exe"
-     }
-   Start-BitsTransfer @parameters
+   Invoke-WebRequest https://aka.ms/WACdownload -OutFile C:\Labfiles\Lab06\WindowsAdminCenter.exe
    ```
-1. Enter the following command and then press Enter to install Windows Admin Center:
+1. Enter the following command and then press Enter to install Windows Admin Center. The installation window displays the installation progress:
 	
    ```powershell
-   Start-Process -FilePath '.\WindowsAdminCenter.exe' -ArgumentList '/VERYSILENT' -Wait
+   Start-Process -FilePath '.\WindowsAdminCenter.exe' -Wait
    ```
 
    > **Note**: Wait until the installation completes. This should take about 2 minutes.
@@ -108,8 +104,8 @@ This lab should take approximately **90** minutes to complete.
 
 1. If prompted, in the **Windows Security** dialog box, enter the credentials provided by the instructor, and then select **OK**.
 1. Review all tabs on the **Configure your Windows Admin Center Settings and environment** pop-up window, including the **Extensions** tab and select **Complete** to close the window.
-1. On the All connections pane, select **+ Add**.
-1. On the Add or create resources pane, on the **Servers** tile, select **Add**.
+1. On the **All connections** pane, select **+ Add**, and then select **Add manually**.
+1. On the **Add a server connection** pane, select **Servers**, and then select **Add**.
 1. In the **Server name** text box, enter **sea-svr3.contoso.com**. 
 1. If needed, ensure that the **Use another account for this connection** option is selected, enter the credentials provided by the instructor, and then select **Add with credentials**.
 
@@ -245,6 +241,15 @@ This lab should take approximately **90** minutes to complete.
 
    > **Note**: Both disks are present and healthy, but offline. To use them, you need to initialize and format them.
 
+1. If either of the two iSCSI disks is listed as **Online**, use the following commands to take disks 1 and 2 offline. Do not take disk 0 offline because it contains the operating system:
+
+   ```powershell
+   Set-Disk -Number 1 -IsOffline $true
+   Set-Disk -Number 2 -IsOffline $true
+   ```
+
+   Run `Get-Disk` again to verify that disks 1 and 2 are offline before continuing.
+
 1. Enter the following commands, and press Enter after each to create a volume formatted with ReFS with the drive letter **E**.
 
    ```powershell
@@ -368,7 +373,7 @@ This lab should take approximately **90** minutes to complete.
 1. In the Disks pane, scroll down to the listing of **SEA-SVR3** disks 1 through 4, and verify that their respective entries in the **Partition** column are listed as **Unknown**.
 1. Select each of the four disks in sequence, and then display its context-sensitive menu. In the menu, select the **Bring Online** option, and then in the **Bring Disk Online** window, select **Yes**.
 1. Use the same method to bring online all disks of **SEA-SVR1** and **SEA-SVR2**.
-1. On **SEA-ADM1**, select **Start**, and in the **Start** menu, select **Windows PowerShell ISE**.
+1. On **SEA-ADM1**, select **Start**, right-click **Windows PowerShell ISE**, and select **Run as administrator**. Verify that the window title starts with **Administrator:** before continuing.
 1. In **Windows PowerShell ISE**, select the **File** menu. In the **File** menu, select **Open**, and then, in the **Open** dialog box, go to **C:\Labfiles\Lab06**.
 1. Select **Implement-StorageSpacesDirect.ps1**, and then select **Open**.
 
