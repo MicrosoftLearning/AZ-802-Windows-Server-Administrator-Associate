@@ -30,14 +30,14 @@ This lab should take approximately **40** minutes to complete.
 1. Right-click or access the context menu for **User Defined**, select **New**, and then select **Data Collector Set**. This will launch the **Create new Data Collector Set** wizard.
 1. On the **How would you like to create this new data collector set?** page of the **Create new Data Collector Set** wizard, enter **SEA-SVR2 Performance** in the **Name** box.
 1. Select the **Create manually (Advanced)** option, and then select **Next**.
-1. On the **What type of data do you want to include?** page, select the **Performance counter** checkbox, and then select **Next**.
+1. On the **What type of data do you want to include?** page, under **Create data logs**, select the **Performance counter** checkbox, and then select **Next**.
 1. On the **Which performance counters would you like to log?** page, select **Add**.
 1. In the **Available counters** list, expand **Processor**, select **% Processor Time**, ensure that the **_Total** entry is selected in the **Instances of selected object** section, and then select **Add**.
 1. In the **Available counters** list, expand **Memory**, select **Pages/sec**, and then select **Add**.
 1. In the **Available counters** list, expand **PhysicalDisk**, select **% Disk Time**, ensure that the **_Total** entry is selected in the **Instances of selected object** section, and then select **Add**.
 1. Select **Avg. Disk Queue Length**, ensure that the **_Total** entry is selected in the **Instances of selected object** section, and then select **Add**.
 1. In the **Available counters** list, expand **System**, select **Processor Queue Length**, and then select **Add**.
-1. In the **Available counters** list, expand **Network Interface**, select **Bytes Total/sec**, ensure that the **<All instances>** entry is selected in the **Instances of selected object** section, select **Add**, and then select **OK**.
+1. In the **Available counters** list, expand **Network Interface**, and then select **Bytes Total/sec**. In the **Instances of selected object** list, select **<All instances>**, select **Add**, and then select **OK**.
 1. On the **Which performance counters would you like to log?** page, enter **1** in the **Sample interval** box, and then select **Next**.
 1. On the **Where would you like the data to be saved?** page, select **Next**.
 1. On the **Create the data collector set?** page, ensure that the **Save and close** option is selected, and then select **Finish**.
@@ -176,7 +176,7 @@ This lab should take approximately **40** minutes to complete.
    > **Note**: Leave the Windows PowerShell window open.
 
 1. On **SEA-SVR2**, in the **Type here to search** text box next to the **Start** button, enter **Active**, and then, in the **Best match** list, select **Active Directory Users and Computers**.
-1. In the **Active Directory Users and Computers** console, select the **Builtin** container. 
+1. In the **Active Directory Users and Computers** console, expand **contoso.com**, and then select the **Builtin** container. 
 1. In the **Builtin** container, select the **Event Log Readers** group.
 1. Right-click or access the context menu for the **Event Log Readers** group, select **Properties**, and then, in the **Event Log Readers Properties** dialog box, select the **Members** tab.
 1. On the **Members** tab, select **Add**.

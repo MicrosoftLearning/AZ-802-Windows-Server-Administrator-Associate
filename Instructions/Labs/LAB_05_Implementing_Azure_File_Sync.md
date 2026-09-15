@@ -30,7 +30,7 @@ This lab should take approximately **60** minutes to complete.
    Install-WindowsFeature -Name RSAT-DFS-Mgmt-Con -IncludeManagementTools
    ```
 1. On the taskbar, select **File Explorer**.
-1. In File Explorer, browse to the **C:\\Labfiles\\Lab05** folder.
+1. In File Explorer, browse to the folder that contains the Lab 5 files.
 1. In File Explorer, in the details pane, select the file **DeployDFS.ps1**, display its context-sensitive menu, and then, in the menu, select **Edit**.
 
    >**Note:** This will automatically open the file **DeployDFS.ps1** in the script pane of Windows PowerShell ISE.
@@ -92,7 +92,7 @@ This lab should take approximately **60** minutes to complete.
 
 1. On **SEA-ADM1**, in the Azure portal, in the details pane, select **share1**.
 1. In the details pane, select **Upload**.
-1. On the **Upload files** tab, browse to **C:\\Labfiles\\Lab05\\File1.txt**, select **Upload**, and when the upload is complete, close the **Upload files** tab.
+1. On the **Upload files** tab, browse to the folder that contains the Lab 5 files, select **File1.txt**, select **Upload**, and when the upload is complete, close the **Upload files** tab.
 1. Browse back to the **File shares** menu, select the elipsis of **share1** and then, on the list displayed, select **View snapshots**.
 1. On the **File share snapshots** page, select **Add snapshot** and click **Ok**.
 1. Browse back to the **Classic file shares** menu, select the elipsis of **share1** and then, on the list displayed, select **Connect**. Select **Show Script**, use the **Copy to clipboard** button to copy the script, and then close the **Connect** tab.
@@ -133,8 +133,8 @@ This lab should take approximately **60** minutes to complete.
 
 1. On **SEA-ADM1**, in the Azure portal, on the **FileSync1 \| Registered servers** page, select the **Azure File Sync agent** link to go to the **Azure File Sync Agent** Microsoft Downloads page.  
 1. On the **Azure File Sync Agent** Microsoft Downloads page, select **Download**, select the checkbox next to the entry for File Sync agent for Windows Server 2022 (**StorageSyncAgent_WS2022.msi**), and select **Next** to start the download. After the download is complete, close the Microsoft Edge tab that opened for the download.
-1. Use File Explorer to copy the downloaded file to the **C:\\Labfiles\\Lab05** folder.
-1. In File Explorer displaying the content of the **C:\\Labfiles\\Lab05** folder, in the details pane, select the file **Install-FileSyncServerCore.ps1**, display its context-sensitive menu, and then, in the menu, select **Edit**.
+1. Use File Explorer to copy the downloaded **StorageSyncAgent_WS2022.msi** file to the folder that already contains **DeployDFS.ps1**, **File1.txt**, and **Install-FileSyncServerCore.ps1**.
+1. In File Explorer displaying the Lab 5 files, in the details pane, select **Install-FileSyncServerCore.ps1**, display its context-sensitive menu, and then, in the menu, select **Edit**.
 
    >**Note:** This will automatically open the file **Install-FileSyncServerCore.ps1** in the script pane of Windows PowerShell ISE.
 
