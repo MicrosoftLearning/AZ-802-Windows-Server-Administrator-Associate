@@ -1,0 +1,513 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "labadmin",
+      "metadata": { "description": "Admin username for all VMs" }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": { "description": "Admin password for all VMs" }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": { "description": "Azure region for all resources" }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4s_v5",
+      "metadata": { "description": "VM size — must support nested virtualization" }
+    },
+    "labNumber": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 8,
+      "metadata": { "description": "Lab number used to select lab-specific infrastructure" }
+    },
+    "allowedRdpSourceIP": {
+      "type": "string",
+      "defaultValue": "*",
+      "metadata": { "description": "Source IP for RDP access (CIDR). Use your public IP for security." }
+    }
+  },
+  "variables": {
+    "vnetName": "AZ802-VNet",
+    "subnetName": "LabSubnet",
+    "nsgName": "AZ802-NSG",
+    "vnetPrefix": "172.16.0.0/16",
+    "subnetPrefix": "172.16.10.0/24",
+    "noDataDisks": [],
+    "lab05Svr1DataDisks": [
+      { "lun": 0, "diskSizeGB": 8, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR1-data1" }
+    ],
+    "lab05Svr2DataDisks": [
+      { "lun": 0, "diskSizeGB": 8, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR2-data1" }
+    ],
+    "lab06Svr1DataDisks": [
+      { "lun": 0, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR1-data1" },
+      { "lun": 1, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR1-data2" },
+      { "lun": 2, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR1-data3" },
+      { "lun": 3, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR1-data4" }
+    ],
+    "lab06Svr2DataDisks": [
+      { "lun": 0, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR2-data1" },
+      { "lun": 1, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR2-data2" },
+      { "lun": 2, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR2-data3" },
+      { "lun": 3, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR2-data4" }
+    ],
+    "lab06Svr3DataDisks": [
+      { "lun": 0, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data1" },
+      { "lun": 1, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data2" },
+      { "lun": 2, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data3" },
+      { "lun": 3, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data4" }
+    ],
+    "labVMs": {
+      "1": [ "SEA-DC1", "SEA-ADM1", "SEA-SVR1" ],
+      "2": [ "SEA-DC1", "SEA-ADM1" ],
+      "3": [ "SEA-DC1", "SEA-ADM1", "SEA-SVR1" ],
+      "4": [ "SEA-DC1", "SEA-ADM1", "SEA-SVR1" ],
+      "5": [ "SEA-DC1", "SEA-ADM1", "SEA-SVR1", "SEA-SVR2" ],
+      "6": [ "SEA-DC1", "SEA-ADM1", "SEA-SVR1", "SEA-SVR2", "SEA-SVR3" ],
+      "7": [ "SEA-DC1", "SEA-SVR1", "SEA-SVR2" ],
+      "8": [ "SEA-DC1", "SEA-SVR2" ]
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('nsgName')]",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "environment": "training" },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-RDP",
+            "properties": {
+              "priority": 1000,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "[parameters('allowedRdpSourceIP')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "Allow-WAC",
+            "properties": {
+              "priority": 1010,
+              "direction": "Inbound",
+              "access": "Allow",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "[parameters('allowedRdpSourceIP')]",
+              "destinationAddressPrefix": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('vnetName')]",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "environment": "training" },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": { "addressPrefixes": [ "[variables('vnetPrefix')]" ] },
+        "subnets": [
+          {
+            "name": "[variables('subnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('subnetPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-DC1-pip",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "sku": { "name": "Standard" },
+      "properties": { "publicIPAllocationMethod": "Static" }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-ADM1-pip",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-ADM1')]",
+      "sku": { "name": "Standard" },
+      "properties": { "publicIPAllocationMethod": "Static" }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR1-pip",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR1')]",
+      "sku": { "name": "Standard" },
+      "properties": { "publicIPAllocationMethod": "Static" }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR2-pip",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR2')]",
+      "sku": { "name": "Standard" },
+      "properties": { "publicIPAllocationMethod": "Static" }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR3-pip",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR3')]",
+      "sku": { "name": "Standard" },
+      "properties": { "publicIPAllocationMethod": "Static" }
+    },
+
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-DC1-nic",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-DC1-pip')]"
+      ],
+      "properties": {
+        "ipConfigurations": [{
+          "name": "ipconfig1",
+          "properties": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "172.16.10.10",
+            "subnet": { "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]" },
+            "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-DC1-pip')]" }
+          }
+        }]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-ADM1-nic",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-ADM1')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-ADM1-pip')]"
+      ],
+      "properties": {
+        "ipConfigurations": [{
+          "name": "ipconfig1",
+          "properties": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "172.16.10.11",
+            "subnet": { "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]" },
+            "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-ADM1-pip')]" }
+          }
+        }]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR1-nic",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR1')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR1-pip')]"
+      ],
+      "properties": {
+        "ipConfigurations": [{
+          "name": "ipconfig1",
+          "properties": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "172.16.10.12",
+            "subnet": { "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]" },
+            "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR1-pip')]" }
+          }
+        }]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR2-nic",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR2')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR2-pip')]"
+      ],
+      "properties": {
+        "ipConfigurations": [{
+          "name": "ipconfig1",
+          "properties": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "172.16.10.13",
+            "subnet": { "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]" },
+            "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR2-pip')]" }
+          }
+        }]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2023-05-01",
+      "name": "SEA-SVR3-nic",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR3')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR3-pip')]"
+      ],
+      "properties": {
+        "ipConfigurations": [{
+          "name": "ipconfig1",
+          "properties": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "172.16.10.14",
+            "subnet": { "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]" },
+            "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR3-pip')]" }
+          }
+        }]
+      }
+    },
+
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-07-01",
+      "name": "SEA-DC1",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "role": "DomainController" },
+      "dependsOn": [ "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-DC1-nic')]" ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('vmSize')]" },
+        "osProfile": {
+          "computerName": "SEA-DC1",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-g2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": { "storageAccountType": "Premium_LRS" }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-DC1-nic')]" }]
+        },
+        "securityProfile": {
+          "securityType": "TrustedLaunch",
+          "uefiSettings": { "secureBootEnabled": true, "vTpmEnabled": true }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-07-01",
+      "name": "SEA-ADM1",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "role": "ManagementWorkstation" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-ADM1')]",
+      "dependsOn": [ "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-ADM1-nic')]" ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('vmSize')]" },
+        "osProfile": {
+          "computerName": "SEA-ADM1",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-g2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": { "storageAccountType": "Premium_LRS" }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-ADM1-nic')]" }]
+        },
+        "securityProfile": {
+          "securityType": "TrustedLaunch",
+          "uefiSettings": { "secureBootEnabled": true, "vTpmEnabled": true }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-07-01",
+      "name": "SEA-SVR1",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "role": "MemberServer" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR1')]",
+      "dependsOn": [ "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR1-nic')]" ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('vmSize')]" },
+        "osProfile": {
+          "computerName": "SEA-SVR1",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-core-g2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": { "storageAccountType": "Premium_LRS" }
+          },
+          "dataDisks": "[if(equals(parameters('labNumber'), 5), variables('lab05Svr1DataDisks'), if(equals(parameters('labNumber'), 6), variables('lab06Svr1DataDisks'), variables('noDataDisks')))]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR1-nic')]" }]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-07-01",
+      "name": "SEA-SVR2",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "role": "MemberServer" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR2')]",
+      "dependsOn": [ "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR2-nic')]" ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('vmSize')]" },
+        "osProfile": {
+          "computerName": "SEA-SVR2",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-g2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": { "storageAccountType": "Premium_LRS" }
+          },
+          "dataDisks": "[if(equals(parameters('labNumber'), 5), variables('lab05Svr2DataDisks'), if(equals(parameters('labNumber'), 6), variables('lab06Svr2DataDisks'), variables('noDataDisks')))]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR2-nic')]" }]
+        },
+        "securityProfile": {
+          "securityType": "TrustedLaunch",
+          "uefiSettings": { "secureBootEnabled": true, "vTpmEnabled": true }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2023-07-01",
+      "name": "SEA-SVR3",
+      "location": "[parameters('location')]",
+      "tags": { "lab": "AZ-802", "role": "StorageServer" },
+      "condition": "[contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR3')]",
+      "dependsOn": [ "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR3-nic')]" ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('vmSize')]" },
+        "osProfile": {
+          "computerName": "SEA-SVR3",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-core-g2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": { "storageAccountType": "Premium_LRS" }
+          },
+          "dataDisks": [
+            { "lun": 0, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data1" },
+            { "lun": 1, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data2" },
+            { "lun": 2, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data3" },
+            { "lun": 3, "diskSizeGB": 128, "createOption": "Empty", "managedDisk": { "storageAccountType": "Standard_LRS" }, "name": "SEA-SVR3-data4" }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [{ "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SEA-SVR3-nic')]" }]
+        },
+        "securityProfile": {
+          "securityType": "TrustedLaunch",
+          "uefiSettings": { "secureBootEnabled": true, "vTpmEnabled": true }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "seaDc1PublicIP": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', 'SEA-DC1-pip')).ipAddress]"
+    },
+    "seaAdm1PublicIP": {
+      "type": "string",
+      "value": "[if(contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-ADM1'), reference(resourceId('Microsoft.Network/publicIPAddresses', 'SEA-ADM1-pip')).ipAddress, '')]"
+    },
+    "seaSvr1PublicIP": {
+      "type": "string",
+      "value": "[if(contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR1'), reference(resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR1-pip')).ipAddress, '')]"
+    },
+    "seaSvr2PublicIP": {
+      "type": "string",
+      "value": "[if(contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR2'), reference(resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR2-pip')).ipAddress, '')]"
+    },
+    "seaSvr3PublicIP": {
+      "type": "string",
+      "value": "[if(contains(variables('labVMs')[string(parameters('labNumber'))], 'SEA-SVR3'), reference(resourceId('Microsoft.Network/publicIPAddresses', 'SEA-SVR3-pip')).ipAddress, '')]"
+    }
+  }
+}
