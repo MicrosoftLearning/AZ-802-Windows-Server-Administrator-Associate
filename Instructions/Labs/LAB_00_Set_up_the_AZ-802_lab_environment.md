@@ -1,6 +1,6 @@
 ---
 lab:
-   title: 'Lab 0: Set up the Windows Server lab environment'
+  title: 'Lab 0: Set up the Windows Server lab environment'
   description: 'In this lab, you create the reusable AZ-802 baseline environment and prepare it for the lab you want to complete by using either Azure or local Hyper-V.'
   duration: 45 minutes
   level: 200
