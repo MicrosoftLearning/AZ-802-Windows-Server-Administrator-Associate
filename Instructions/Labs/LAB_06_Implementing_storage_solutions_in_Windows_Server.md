@@ -34,7 +34,7 @@ This lab should take approximately **90** minutes to complete.
 1. On the **Select features** page, select **Next**, and then in the **Confirm installation selections** page, select **Install**.
 1. While the role service is installing, on the taskbar, select the **File Explorer** icon.
 1. In **File Explorer**, browse to drive **C**.
-1. Select the **Labfiles** directory, and then display the context-sensitive menu. In the menu, select **Give access to**, and then, in the cascading menu, select **Specific people...**.
+1. Select the **C:\\Allfiles\\AZ802-Lab06** directory, and then display the context-sensitive menu. In the menu, select **Give access to**, and then, in the cascading menu, select **Specific people...**.
 1. In the **Network access** window, in the **Type a name and then click Add, or click the arrow to find someone** text box, type **Users** and click **Add**.
 1. In the **Network access** window, select **Share**, and once you are presented with the **Your folder is shared** window, select **Done**.
 1. Switch back to the **Server Manager** window, and then, on the **Add Roles and Features Wizard installation succeeded** page, select **Close**.
@@ -54,9 +54,9 @@ This lab should take approximately **90** minutes to complete.
 1. At the **Windows PowerShell** prompt, enter the following commands, and press Enter after each to copy from **SEA-ADM1** a script that creates sample files to be deduplicated, execute it, and identify the outcome:
 
    ```powershell
-   New-PSDrive -Name 'X' -PSProvider FileSystem -Root '\\SEA-ADM1\Labfiles'
+   New-PSDrive -Name 'X' -PSProvider FileSystem -Root '\\SEA-ADM1\AZ802-Lab06'
    New-Item -Type Directory -Path 'M:\Data' -Force
-   Copy-Item -Path X:\Lab06\CreateLabFiles.cmd -Destination M:\Data\ -PassThru
+   Copy-Item -Path X:\CreateLabFiles.cmd -Destination M:\Data\ -PassThru
    Start-Process -FilePath M:\Data\CreateLabFiles.cmd -PassThru
    Set-Location -Path M:\Data
    Get-ChildItem -Path .
@@ -83,10 +83,11 @@ This lab should take approximately **90** minutes to complete.
 
    >**Note**: Perform the next two steps to install Windows Admin Center on **SEA-ADM1**.
 
-1. In the **Windows PowerShell** console, enter the following command and then press Enter to download the latest version of Windows Admin Center:
+1. In the **Windows PowerShell** console, enter the following commands, and then press Enter after each command to download the latest version of Windows Admin Center:
 	
    ```powershell
-   Invoke-WebRequest https://aka.ms/WACdownload -OutFile C:\Labfiles\Lab06\WindowsAdminCenter.exe
+   Set-Location -Path 'C:\Allfiles\AZ802-Lab06'
+   Invoke-WebRequest https://aka.ms/WACdownload -OutFile .\WindowsAdminCenter.exe
    ```
 1. Enter the following command and then press Enter to install Windows Admin Center. The installation window displays the installation progress:
 	
@@ -98,7 +99,7 @@ This lab should take approximately **90** minutes to complete.
 
 1. On **SEA-ADM1**, start Microsoft Edge, and then go to `https://SEA-ADM1.contoso.com`.
 
-   >**Note**: If the link does not work, on **SEA-ADM1**, run **WindowsAdminCenter.exe** again. After the installation completes, refresh Microsoft Edge.
+   >**Note**: If the link does not work, on **SEA-ADM1**, run **C:\Allfiles\AZ802-Lab06\WindowsAdminCenter.exe** again. After the installation completes, refresh Microsoft Edge.
 
    >**Note**: If you get **NET::ERR_CERT_DATE_INVALID** error, select **Advanced** on the Edge browser page, at the bottom of page select **Continue to sea-adm1-contoso.com (unsafe)**.
 
@@ -374,7 +375,7 @@ This lab should take approximately **90** minutes to complete.
 1. Select each of the four disks in sequence, and then display its context-sensitive menu. In the menu, select the **Bring Online** option, and then in the **Bring Disk Online** window, select **Yes**.
 1. Use the same method to bring online all disks of **SEA-SVR1** and **SEA-SVR2**.
 1. On **SEA-ADM1**, select **Start**, right-click **Windows PowerShell ISE**, and select **Run as administrator**. Verify that the window title starts with **Administrator:** before continuing.
-1. In **Windows PowerShell ISE**, select the **File** menu. In the **File** menu, select **Open**, and then, in the **Open** dialog box, go to **C:\Labfiles\Lab06**.
+1. In **Windows PowerShell ISE**, select the **File** menu. In the **File** menu, select **Open**, and then, in the **Open** dialog box, go to **C:\Allfiles\AZ802-Lab06**.
 1. Select **Implement-StorageSpacesDirect.ps1**, and then select **Open**.
 
    > **Note**: The script is divided into numbered steps. There are eight steps, and each step has a number of commands. To execute an individual line, you can place the cursor anywhere within that line and press F8 or select the **Run Selection** in the toolbar of the **Windows PowerShell ISE** window. To execute multiple lines, select all of them in their entirety, and then use either F8 or the **Run Selection** toolbar icon. The sequence of steps is described in the instructions of this exercise. Ensure that each step completes before starting the next one.

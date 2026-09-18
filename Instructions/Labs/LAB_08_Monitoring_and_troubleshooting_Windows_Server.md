@@ -98,7 +98,7 @@ This lab should take approximately **40** minutes to complete.
 #### Task 1: Create additional workload on the server
 
 1. On **SEA-SVR2**, open File Explorer.
-1. In File Explorer, browse to **C:\Labfiles\Lab08**.
+1. In File Explorer, browse to **C:\Allfiles\AZ802-Lab08**, which contains **CPUSTRES64.EXE** and **Eula.txt**.
 1. Double-click or select **CPUSTRES64.EXE**, and then press Enter.
 
    > **Note**: **CPUSTRES64.EXE** is a SysInternals utility that can be used to simulate CPU activity by running up to 64 threads in a loop.
