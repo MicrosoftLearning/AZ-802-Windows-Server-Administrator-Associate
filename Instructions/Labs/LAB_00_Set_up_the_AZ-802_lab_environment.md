@@ -14,6 +14,12 @@ lab:
     - PowerShell
 ---
 
+> [!WARNING]
+> This lab is currently under development. Don't use it to provision a lab environment yet.
+
+> [!NOTE]
+> Complete this lab only if you don't have an ALH environment and need to create your own Windows Server lab environment. If you're taking this training as part of a class that provides a lab environment, skip this lab.
+
 # Lab 0: Set up the Windows Server lab environment
 
 Use this lab to create and prepare a self-hosted environment for AZ-802 Labs 1 through 8. Complete Lab 0 before starting another lab.
@@ -66,7 +72,10 @@ The automated setup creates the `contoso.com` domain and configures `CONTOSO\Adm
 - **Username**: `CONTOSO\Administrator`
 - **Password**: `PA55w.rd1234`
 
-## Exercise 3: Create an Azure environment
+Choose one of the following hosting options. Complete only the option that matches where you want to host the lab environment.
+
+<details>
+<summary><strong>Exercise 3: Create an Azure environment</strong></summary>
 
 Complete this exercise if you host the lab in an Azure subscription. Otherwise, continue to Exercise 4.
 
@@ -170,7 +179,10 @@ Get-AzVM -ResourceGroupName 'AZ802-L05-ENV' |
 
 Managed disks and other resources continue to incur charges while the VMs are deallocated.
 
-## Exercise 4: Create a local Hyper-V environment
+</details>
+
+<details>
+<summary><strong>Exercise 4: Create a local Hyper-V environment</strong></summary>
 
 Complete this exercise if you host the lab on a local Hyper-V server. Otherwise, continue to Exercise 5.
 
@@ -253,6 +265,8 @@ $vmNames | ForEach-Object {
     Restore-VMSnapshot -VMName $_ -Name 'Baseline' -Confirm:$false
 }
 ```
+
+</details>
 
 ## Exercise 5: Prepare for Labs 1 through 8
 
