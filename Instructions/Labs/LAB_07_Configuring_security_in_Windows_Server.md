@@ -43,10 +43,10 @@ This lab should take approximately **40** minutes to complete.
 #### Task 2: Enable Windows Defender Credential Guard using the Hypervisor-Protected Code Integrity (HVCI) and Windows Defender Credential Guard hardware readiness tool
 
 1. On **SEA-SVR2**, select **Start**, right-click or access the **context** menu for **Windows PowerShell**, and then select **Run as administrator**.
-1. To run the HVCI and Windows Defender Credential Guard hardware readiness tool, at the Windows PowerShell command prompt, enter the following commands, select **[R] Run once** at the first prompt, and then press Enter for the rest of the prompts:
+1. At the Windows PowerShell command prompt, set the current location to **C:\Allfiles\AZ802-Lab07**, and then run the HVCI and Windows Defender Credential Guard hardware readiness tool. Select **[R] Run once** at the first prompt, and then press Enter for the rest of the prompts:
 
    ```powershell
-   Set-Location -Path C:\Labfiles\Lab07\
+   Set-Location -Path 'C:\Allfiles\AZ802-Lab07'
    .\DG_Readiness_Tool.ps1 -Enable -AutoReboot
    ```
 
@@ -109,7 +109,7 @@ This lab should take approximately **40** minutes to complete.
 1. To install LAPS, at the Windows PowerShell command prompt, enter the following command and press Enter:
 
    ```powershell
-   Msiexec /i C:\Labfiles\Lab07\LAPS.x64.msi
+   Msiexec /i 'C:\Allfiles\AZ802-Lab07\LAPS.x64.msi'
    ```
 
 1. On the **Welcome to the Local Administrator Password Solution Setup Wizard** page of the **Local Administrator Password Solution Setup** wizard, select **Next**.
