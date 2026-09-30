@@ -28,7 +28,7 @@ This lab should take approximately **40** minutes to complete.
 1. On **SEA-SVR2**, in the **Type here to search** text box next to the **Start** button, enter **Perf**, and then, in the **Best match** list, select **Performance Monitor**.
 1. In Performance Monitor, expand the **Data Collector Sets** node in the navigation pane, and then select **User Defined**.
 1. Right-click or access the context menu for **User Defined**, select **New**, and then select **Data Collector Set**. This will launch the **Create new Data Collector Set** wizard.
-1. On the **How would you like to create this new data collector set?** page of the **Create new Data Collector Set** wizard, enter **SEA-SVR2 Performance** in the **Name** box.
+1. On the **How would you like to create this new data collector set?** page of the **Create new Data Collector Set** wizard, enter `SEA-SVR2 Performance` in the **Name** box.
 1. Select the **Create manually (Advanced)** option, and then select **Next**.
 1. On the **What type of data do you want to include?** page, under **Create data logs**, select the **Performance counter** checkbox, and then select **Next**.
 1. On the **Which performance counters would you like to log?** page, select **Add**.
@@ -37,7 +37,7 @@ This lab should take approximately **40** minutes to complete.
 1. In the **Available counters** list, expand **PhysicalDisk**, select **% Disk Time**, ensure that the **_Total** entry is selected in the **Instances of selected object** section, and then select **Add**.
 1. Select **Avg. Disk Queue Length**, ensure that the **_Total** entry is selected in the **Instances of selected object** section, and then select **Add**.
 1. In the **Available counters** list, expand **System**, select **Processor Queue Length**, and then select **Add**.
-1. In the **Available counters** list, expand **Network Interface**, and then select **Bytes Total/sec**. In the **Instances of selected object** list, select **<All instances>**, select **Add**, and then select **OK**.
+1. In the **Available counters** list, expand **Network Interface**, and then select **Bytes Total/sec**. In the **Instances of selected object** list, select **&lt;All instances&gt;**, select **Add**, and then select **OK**.
 1. On the **Which performance counters would you like to log?** page, enter **1** in the **Sample interval** box, and then select **Next**.
 1. On the **Where would you like the data to be saved?** page, select **Next**.
 1. On the **Create the data collector set?** page, ensure that the **Save and close** option is selected, and then select **Finish**.
@@ -182,7 +182,7 @@ This lab should take approximately **40** minutes to complete.
 1. On the **Members** tab, select **Add**.
 1. In the **Select Users, Contacts, Computers, Service Accounts or Groups** dialog box, select **Object Types**.
 1. In the **Object Types** dialog box, select the **Computers** checkbox, and then select **OK**.
-1. In the **Select Users, Computers, Service Accounts or Groups** dialog box, enter **SEA-SVR2** in the **Enter the object names to select** box, and then select **OK**.
+1. In the **Select Users, Computers, Service Accounts or Groups** dialog box, enter `SEA-SVR2` in the **Enter the object names to select** box, and then select **OK**.
 1. In the **Event Log Readers Properties** dialog box, select **OK**.
 
 #### Task 2: Create a subscription and verify the results
@@ -190,10 +190,10 @@ This lab should take approximately **40** minutes to complete.
 1. On **SEA-SVR2**, in the **Type here to search** text box next to the **Start** button, enter **Event**, and then, in the **Best match** list, select **Event Viewer**.
 1. In **Event Viewer**, select **Subscriptions** in the navigation pane.
 1. Right-click or access the context menu for **Subscriptions**, and then select **Create Subscription**.
-1. In the **Subscription Properties** dialog box, enter **SEA-DC1 Events** in the **Subscription name** box.
+1. In the **Subscription Properties** dialog box, enter `SEA-DC1 Events` in the **Subscription name** box.
 1. Ensure that the **Collector initiated** option is selected, and then select **Select Computers**.
 1. In the **Computers** dialog box, select **Add Domain Computers**.
-1. In the **Select Computer** dialog box, enter **SEA-DC1** in the **Enter the object name to select** box, and then select **OK**.
+1. In the **Select Computer** dialog box, enter `SEA-DC1` in the **Enter the object name to select** box, and then select **OK**.
 1. In the **Computers** dialog box, select **OK**.
 1. In the **Subscription Properties – SEA-DC1 Events** dialog box, select **Select Events**.
 1. In the **Logged** drop-down list, select **Last 24 hours**.
