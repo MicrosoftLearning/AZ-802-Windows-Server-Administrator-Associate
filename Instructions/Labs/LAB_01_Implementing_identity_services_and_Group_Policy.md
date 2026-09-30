@@ -46,7 +46,7 @@ This lab should take approximately **45** minutes to complete.
 1. On the **Manage** menu, select **Add Servers**.
 1. In the **Add Servers** dialog box, maintain the default settings, and then select **Find Now**.
 1. In the **Active Directory** list of servers, select **SEA-SVR1**, select the arrow to add it to the **Selected** list, and then select **OK**.
-1. On **SEA-ADM1**, ensure that the installation of the AD DS role on **SEA-SVR1** is complete and that the server was added to **Server Manager**. Then select the **Notifications** flag symbol.
+1. On **SEA-ADM1**, in the **All Servers** view, verify that **SEA-SVR1** appears in the **Servers** pane. Ensure that the installation of the AD DS role on **SEA-SVR1** is complete, and then select the **Notifications** flag symbol.
 1. Note the post-deployment configuration of **SEA-SVR1**, and then select the **Promote this server to a domain controller** link.
 1. In the **Active Directory Domain Services Configuration Wizard**, on the **Deployment Configuration** page, under **Select the deployment operation**, verify that **Add a domain controller to an existing domain** is selected.
 1. Ensure that the `Contoso.com` domain is specified, and then in the **Supply the credentials to perform this operation** section, select **Change**.
@@ -55,6 +55,9 @@ This lab should take approximately **45** minutes to complete.
 1. On the **Domain Controller Options** page, ensure that the **Domain Name System (DNS) server** and **Global Catalog (GC)** checkboxes are selected. Ensure that the **Read-only domain controller (RODC)** checkbox is cleared.
 1. In the **Type the Directory Services Restore Mode (DSRM) password** section, enter and confirm the password provided by the instructor, and then select **Next**.
 1. On the **DNS Options** page, select **Next**.
+
+   > **Note**: The warning that a DNS delegation can't be created is expected because the authoritative parent zone can't be found.
+
 1. On the **Additional Options** page, select **Next**.
 1. On the **Paths** page, keep the default path settings for the **Database** folder, **Log files** folder, and **SYSVOL** folder, and then select **Next**.
 1. To open the generated Windows PowerShell script, on the **Review Options** page, select **View script**.
@@ -63,11 +66,11 @@ This lab should take approximately **45** minutes to complete.
    - Delete the comment lines that begin with the number sign (**#**).
    - Remove the **Import-Module** line.
    - Remove the grave accents (**`**) at the end of each line.
-   - Remove the line breaks.
+   - Remove the line breaks, retaining a space between each parameter.
 
 1. Now the **Install-ADDSDomainController** command and all the parameters are on one line. Place the cursor in front of the line, and then, on the **Edit** menu, select **Select All** to select the whole line. On the menu, select **Edit**, and then select **Copy**.
 
-1. When prompted for confirmation, select **Yes** to cancel the wizard.
+1. Switch back to the **Active Directory Domain Services Configuration Wizard**, select **Cancel**, and then, when prompted for confirmation, select **Yes**.
 1. At the Windows PowerShell command prompt, enter the following command:
 
    ```powershell
