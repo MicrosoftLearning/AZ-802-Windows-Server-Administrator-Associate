@@ -43,7 +43,7 @@ This lab should take approximately **40** minutes to complete.
 #### Task 2: Enable Windows Defender Credential Guard using the Hypervisor-Protected Code Integrity (HVCI) and Windows Defender Credential Guard hardware readiness tool
 
 1. On **SEA-SVR2**, select **Start**, right-click or access the **context** menu for **Windows PowerShell**, and then select **Run as administrator**.
-1. At the Windows PowerShell command prompt, set the current location to **C:\Allfiles\AZ802-Lab07**, and then run the HVCI and Windows Defender Credential Guard hardware readiness tool. Select **[R] Run once** at the first prompt, and then press Enter for the rest of the prompts:
+1. At the Windows PowerShell command prompt, set the current location to **C:\Allfiles\AZ802-Lab07**, and then run the HVCI and Windows Defender Credential Guard hardware readiness tool. If a security warning appears, select **[R] Run once**. If the warning doesn't appear, continue to the next step. Press Enter for any other prompts:
 
    ```powershell
    Set-Location -Path 'C:\Allfiles\AZ802-Lab07'
