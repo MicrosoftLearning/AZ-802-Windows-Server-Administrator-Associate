@@ -50,7 +50,7 @@ This lab should take approximately **60** minutes to complete.
 
 #### Task 3: Create a virtual machine
 
-1. On **SEA-ADM1**, in Hyper-V Manager, select **New**, and then select **Virtual Machine**. The **New Virtual Machine Wizard** starts.
+1. On **SEA-ADM1**, in Hyper-V Manager, verify that **SEA-SVR1.CONTOSO.COM** is selected. In the **Actions** pane, under **SEA-SVR1.CONTOSO.COM**, select **New**, and then select **Virtual Machine**. The **New Virtual Machine Wizard** starts.
 1. On the **Before You Begin** page, select **Next**.
 1. On the **Specify Name and Location** page, enter **SEA-VM1**, and then select the check box next to **Store the virtual machine in a different location**.
 1. In the **Location** box, enter **C:\Base**, and then select **Next**.
@@ -84,14 +84,28 @@ This lab should take approximately **60** minutes to complete.
 1. Enter the following command, and then press Enter to install Windows Admin Center:
 	
    ```powershell
-   Start-Process -FilePath '.\WindowsAdminCenter.exe' -ArgumentList '/VERYSILENT' -Wait
+   .\WindowsAdminCenter.exe /SILENT
    ```
 
-   > **Note**: Wait until the installation completes. This should take about 2 minutes. If the web page does not respond, open **services.msc** and verify that the Windows Admin Center server is **Started**.
+   > **Note**: Wait until the installation completes. This might take several minutes.
+
+1. In the Windows PowerShell window, enter the following command, and then press Enter:
+
+   ```powershell
+   Get-Service -Name WindowsAdminCenter
+   ```
+
+1. If the **WindowsAdminCenter** service has a status of **Stopped**, enter the following command, and then press Enter:
+
+   ```powershell
+   Start-Service -Name WindowsAdminCenter
+   ```
+
+1. Run `Get-Service -Name WindowsAdminCenter` again and verify that the service has a status of **Running**.
 
 1. On **SEA-ADM1**, start Microsoft Edge, and then go to `https://SEA-ADM1.contoso.com`. 
    
-   >**Note**: If the link does not work, on **SEA-ADM1**, run **WindowsAdminCenter.exe** again. After the installation completes, refresh Microsoft Edge.
+   > **Note**: If the page displays **ERR_CONNECTION_REFUSED**, run `Get-Service -Name WindowsAdminCenter` in an elevated Windows PowerShell window. If the service is stopped, run `Start-Service -Name WindowsAdminCenter`, and then refresh Microsoft Edge.
 
    >**Note**: If you get **NET::ERR_CERT_DATE_INVALID** error, select **Advanced** on the Edge browser page, at the bottom of page select **Continue to sea-adm1-contoso.com (unsafe)**.
    

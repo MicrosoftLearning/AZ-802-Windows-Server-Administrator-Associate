@@ -39,14 +39,28 @@ This lab should take approximately **60** minutes to complete.
 1. Enter the following command, and then press Enter to install Windows Admin Center:
 	
    ```powershell
-   Start-Process -FilePath '.\WindowsAdminCenter.exe' -ArgumentList '/VERYSILENT' -Wait
+   .\WindowsAdminCenter.exe /SILENT
    ```
 
-   > **Note**: Wait until the installation completes. This should take about 2 minutes.
+   > **Note**: Wait until the installation completes. This might take several minutes.
+
+1. In the Windows PowerShell window, enter the following command, and then press Enter:
+
+   ```powershell
+   Get-Service -Name WindowsAdminCenter
+   ```
+
+1. If the **WindowsAdminCenter** service has a status of **Stopped**, enter the following command, and then press Enter:
+
+   ```powershell
+   Start-Service -Name WindowsAdminCenter
+   ```
+
+1. Run `Get-Service -Name WindowsAdminCenter` again and verify that the service has a status of **Running**.
 
 1. On **SEA-ADM1**, start Microsoft Edge, and then browse to `https://SEA-ADM1.contoso.com`.
  
-   >**Note**: If the link does not work, on **SEA-ADM1**, run **WindowsAdminCenter.exe** again. After the installation completes, refresh Microsoft Edge.
+   > **Note**: If the page displays **ERR_CONNECTION_REFUSED**, run `Get-Service -Name WindowsAdminCenter` in an elevated Windows PowerShell window. If the service is stopped, run `Start-Service -Name WindowsAdminCenter`, and then refresh Microsoft Edge.
 
    >**Note**: If you get **NET::ERR_CERT_DATE_INVALID** error, select **Advanced** on the Edge browser page, at the bottom of page select **Continue to sea-adm1-contoso.com (unsafe)**.
 
