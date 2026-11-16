@@ -132,11 +132,14 @@ This lab should take approximately **60** minutes to complete.
 ### Task 1: Add SEA-SVR1 as a server endpoint
 
 1. On **SEA-ADM1**, in the Azure portal, on the **FileSync1 \| Registered servers** page, select the **Azure File Sync agent** link to go to the **Azure File Sync Agent** Microsoft Downloads page.  
-1. On the **Azure File Sync Agent** Microsoft Downloads page, select **Download**, select the checkbox next to the entry for File Sync agent for Windows Server 2022 (**StorageSyncAgent_WS2022.msi**), and select **Next** to start the download. After the download is complete, close the Microsoft Edge tab that opened for the download.
-1. Use File Explorer to copy the downloaded **StorageSyncAgent_WS2022.msi** file to **C:\Allfiles\AZ802-Lab05**, which already contains **DeployDFS.ps1**, **File1.txt**, and **Install-FileSyncServerCore.ps1**.
-1. In File Explorer displaying **C:\Allfiles\AZ802-Lab05**, in the details pane, select **Install-FileSyncServerCore.ps1**, display its context-sensitive menu, and then, in the menu, select **Edit**.
+1. On the **Azure File Sync Agent** Microsoft Downloads page, select **Download**, select the checkbox next to the entry for File Sync agent for Windows Server 2025 (**StorageSyncAgent_WS2025.msi**), and select **Next** to start the download. After the download is complete, close the Microsoft Edge tab that opened for the download.
 
-   >**Note:** This will automatically open the file **Install-FileSyncServerCore.ps1** in the script pane of Windows PowerShell ISE.
+   >**Note:** If **SEA-SVR1** is running Windows Server 2022, download **StorageSyncAgent_WS2022.msi** instead and use **Install-FileSyncServerCore-2022.ps1** for the following script steps.
+
+1. Use File Explorer to copy the downloaded **StorageSyncAgent_WS2025.msi** file (or **StorageSyncAgent_WS2022.msi** for Windows Server 2022) to **C:\Allfiles\AZ802-Lab05**, which already contains **DeployDFS.ps1**, **File1.txt**, and the File Sync installation scripts.
+1. In File Explorer displaying **C:\Allfiles\AZ802-Lab05**, in the details pane, select **Install-FileSyncServerCore.ps1** for Windows Server 2025 (or **Install-FileSyncServerCore-2022.ps1** for Windows Server 2022), display its context-sensitive menu, and then, in the menu, select **Edit**.
+
+   >**Note:** This opens the selected script in the script pane of Windows PowerShell ISE.
 
 1. In the **Windows PowerShell ISE** script pane, review the script, and then execute it by selecting the **Run Script** icon in the toolbar or by pressing F5. 
 
@@ -146,7 +149,7 @@ This lab should take approximately **60** minutes to complete.
 
    >**Important:** Don't press **Ctrl+C** while the script is running because this cancels the script. Select the device code, right-click the selected text, and then select **Copy**. If you accidentally cancel the script, run it again by pressing F5 and use the new device code.
 
-1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://microsoft.com/devicelogin`.
+1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://login.microsoft.com/device`.
 1. In Microsoft Edge, in the **Enter code** dialog box, paste the code you copied into Clipboard, and then, if needed, sign in with your Azure credentials, on the page displaying the message 
 **Are you trying to sign in to Microsoft Azure PowerShell?**, select **Continue**, and then close the Microsoft Edge tab you opened in the previous step.
 1. Switch to the **Windows PowerShell ISE** window and ensure that the script completed successfully. 
@@ -155,7 +158,7 @@ This lab should take approximately **60** minutes to complete.
 1. On **SEA-ADM1**, switch to the File Explorer window, browse to the **\\\\SEA-SVR1\\Data** share, and verify that the folder doesn't currently contain **File1.txt**.
 1. Switch to the Microsoft Edge window displaying the Azure portal, on the **FileSync1 \| Registered servers** page, select **Sync Groups**, select **Sync1**, and then, on the **Sync1** page, select **Add server endpoint**.
 1. On the **Add server endpoint** tab, select **SEA-SVR1.Contoso.com** in the **Registered servers** list.
-1. In the **Path** text box, enter **S:\\Data**, and then select **Create**.
+1. In the **Path** text box, enter `S:\\Data`, and then select **Create**.
 1. Switch to the File Explorer window and verify that the **\\\\SEA-SVR1\\Data** folder now contains **File1.txt**.
 
    >**Note:** You uploaded **File1.txt** to the Azure file share, from where it was synced to **SEA-SVR1** by File Sync.
@@ -163,6 +166,9 @@ This lab should take approximately **60** minutes to complete.
 ### Task 2: Register SEA-SVR2 with File Sync
 
 1. On **SEA-ADM1**, switch to the **Windows PowerShell ISE** window to the tab of the script pane displaying the content of the **Install-FileSyncServerCore.ps1** file.
+
+   >**Note:** Use **Install-FileSyncServerCore.ps1** for Windows Server 2025. If **SEA-SVR2** is running Windows Server 2022, open **Install-FileSyncServerCore-2022.ps1** instead. Ensure that the matching agent installer is in **C:\Allfiles\AZ802-Lab05** before running the script.
+
 1. In the **Windows PowerShell ISE** script pane, in the first line, replace `SEA-SVR1` with `SEA-SVR2`, save the change, and execute the script by selecting the **Run Script** icon in the toolbar or by pressing F5. 
 
    >**Note:** Monitor the script execution. This should take about 3 minutes.
@@ -171,7 +177,7 @@ This lab should take approximately **60** minutes to complete.
 
    >**Important:** Don't press **Ctrl+C** while the script is running because this cancels the script. Select the device code, right-click the selected text, and then select **Copy**. If you accidentally cancel the script, run it again by pressing F5 and use the new device code.
 
-1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://microsoft.com/devicelogin`.
+1. Switch to the Microsoft Edge window displaying the Azure portal, open a new tab by selecting **+**, and then, on the new tab, browse to `https://login.microsoft.com/device`.
 1. In Microsoft Edge, in the **Enter code** dialog box, paste the code you copied into Clipboard, and then, if needed, sign in with your Azure credentials, on the page displaying the message 
 **Are you trying to sign in to Microsoft Azure PowerShell?**, select **Continue**, and then close the Microsoft Edge tab you opened in the previous step.
 1. Switch to the **Windows PowerShell ISE** window and ensure that the script completed successfully. 
@@ -183,7 +189,7 @@ This lab should take approximately **60** minutes to complete.
 1. On **SEA-ADM1**, select **DFS Management** on the taskbar.
 1. In **DFS Management**, in the navigation pane, right-click or access the context menu for **Branch1**, select **Delete**, select the **Yes, delete the replication group, stop replicating all associated replicated folders, and delete all members of the replication group** option, and then select **OK**.
 1. Switch to the Microsoft Edge window displaying the Azure portal, browse back to the **FileSync1** **Storage Sync Service** page, in the list of sync groups, select **Sync1**, and then, on the **Sync1** page, select **Add server endpoint**.
-1. In the Add server endpoint pane, select **SEA-SVR2.Contoso.com** in the **Registered servers** list, enter **S:\\Data** in the **Path** text box, and then select **Create**.
+1. In the Add server endpoint pane, select **SEA-SVR2.Contoso.com** in the **Registered servers** list, enter `S:\\Data` in the **Path** text box, and then select **Create**.
 
 ## Exercise 4: Verifying replication and enabling cloud tiering
 
@@ -240,12 +246,10 @@ This lab should take approximately **60** minutes to complete.
 1. On **SEA-ADM1**, use File Explorer to copy the **C:\\Windows\\INF** folder to **\\\\SEA-SVR2\\Data\\**. The folder will sync to the cloud endpoint, which will cause sync traffic.
 1. On **SEA-ADM1**, switch to the Azure portal displaying the **Sync1** sync group page of the **FileSync1** Storage Sync Service.
 1. In the **server endpoints** section, verify that the **Health** of both endpoints has green check marks.
-1. Select the **SEA-SVR2.Contoso.com** endpoint in the Server Endpoint Properties pane, review **Sync Activity**, and then close the pane.
-1. Select the **Files Synced** graph, and then explore how you can customize the graph by using a filter.
+1. Select the **SEA-SVR2.Contoso.com** endpoint and, on the **Properties** tab, review sync activity. Leave the endpoint page open.
+1. Select the **Monitoring** tab, select the **Files Synced** graph, and then explore how you can customize the graph by using a filter.
 1. Switch to the File Explorer window displaying the content of drive **Z** mapped to the Azure File share and verify that the drive contains the content of the **INF** folder synchronized from **\\\\SEA-SVR2\\Data**.
-1. Switch to the Azure portal and verify that the **INF** sync traffic is reflected in the **Files Synced** and **Bytes Synced** graphs. The **INF** folder has more than 800 files, and its size is more than 40 MB.
-
-   >**Note:** You might need to refresh the page displaying the Azure portal to see the updated statistics.
+   >**Note:** To view aggregate sync activity, return to the server endpoint's **Monitoring** tab in the Azure portal and review the **Files Synced** and **Bytes Synced** graphs. Adjust the time range or refresh the page if necessary. These graphs show file counts and data volume, not individual file or folder names.
 
 ### Task 2: Test replication conflict resolution
 
@@ -285,6 +289,3 @@ This lab should take approximately **60** minutes to complete.
 1. Select **Delete**, in the Delete Resources pane, enter **delete** in the text box, and then select **Delete**.
 1. In the navigation pane, select **Resource groups**.
 1. In the details pane, select **AZ802-L0501-RG**, select **Delete resource group**, enter **AZ802-L0501-RG**, and then select **Delete**.
-
-
-

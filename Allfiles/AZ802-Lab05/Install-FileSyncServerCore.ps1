@@ -3,7 +3,7 @@ $rgName = 'AZ802-L0501-RG'
 $fsName = 'FileSync1'
 
 New-Item -Type Directory -Path "\\$srvName\c$\Temp" -Force
-$installerPath = Join-Path $PSScriptRoot 'StorageSyncAgent_WS2022.msi'
+$installerPath = Join-Path $PSScriptRoot 'StorageSyncAgent_WS2025.msi'
 Copy-Item -Path $installerPath -Destination "\\$srvName\c$\Temp\" -PassThru
 
 Invoke-Command -ComputerName $srvName -ArgumentList ($rgName, $fsName) {
@@ -14,7 +14,7 @@ Invoke-Command -ComputerName $srvName -ArgumentList ($rgName, $fsName) {
     Write-Output "Step 2/5: Installing az.StorageSync module..."
     Install-Module az.StorageSync -Force
     Write-Output "Step 3/5: Installing Azure File Sync agent (see C:\Temp\StorageSyncAgent_install.log for progress)..."
-    Start-Process -FilePath "msiexec.exe" -ArgumentList '/i "C:\Temp\StorageSyncAgent_WS2022.msi" /quiet /norestart /l*v C:\Temp\StorageSyncAgent_install.log' -Wait
+    Start-Process -FilePath "msiexec.exe" -ArgumentList '/i "C:\Temp\StorageSyncAgent_WS2025.msi" /quiet /norestart /l*v C:\Temp\StorageSyncAgent_install.log' -Wait
     Write-Output "Step 4/5: Sign in to register this server..."
     Connect-AzAccount -UseDeviceAuthentication
     Write-Output "Step 5/5: Registering server with Storage Sync Service..."

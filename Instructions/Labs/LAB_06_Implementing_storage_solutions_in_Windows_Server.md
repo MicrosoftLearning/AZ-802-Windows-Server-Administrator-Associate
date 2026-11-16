@@ -30,7 +30,8 @@ This lab should take approximately **90** minutes to complete.
 1. In Server Manager, select **Manage**, and then select **Add Roles and Features**.
 1. In the **Add Roles and Features Wizard**, select **Next** twice.
 1. On the **Select destination server** page , in the Server Pool pane, select **SEA-SVR3.Contoso.com**, and then select **Next**.
-1. On the **Select server roles** page, in the Roles pane, expand the **File and Storage Services** item, and then expand the **File and iSCSI Services** item, select the **Data Deduplication** item, and then select **Next**.
+1. On the **Select server roles** page, in the Roles pane, expand **File and Storage Services**, expand **File and iSCSI Services**, and then select **Data Deduplication**.
+1. If the **Add features that are required for Data Deduplication?** dialog box appears, select **Add Features**. On the **Select server roles** page, select **Next**.
 1. On the **Select features** page, select **Next**, and then in the **Confirm installation selections** page, select **Install**.
 1. While the role service is installing, on the taskbar, select the **File Explorer** icon.
 1. In **File Explorer**, browse to drive **C**.
@@ -40,6 +41,8 @@ This lab should take approximately **90** minutes to complete.
 1. Switch back to the **Server Manager** window, and then, on the **Add Roles and Features Wizard installation succeeded** page, select **Close**.
 1. Switch to the **SEA-SVR3** console session, and then, if needed, sign in with the credentials provided by the instructor.
 1. If presented with the **SConfig** menu, at **Enter number to select an option**, enter **15** and press Enter to exit to a **PowerShell** console session.
+
+   > **Note**: If the server displays a desktop instead, select **Start**, enter **Windows PowerShell**, and then select **Run as administrator**.
    
    > **Note**: To open Notepad from PowerShell, type **Notepad** and press enter.
 
@@ -199,8 +202,8 @@ This lab should take approximately **90** minutes to complete.
 #### Task 2: Connect to and configure iSCSI targets
 
 1. On **SEA-ADM1**, switch to **Server Manager**.
-1. On **SEA-ADM1**, switch to the Disks pane in **Server Manager**, and then, in the **TASKS** menu in the upper right corner, select **Refresh**.
-1. In **Server Manager**, with **Disks** of **File and Storage Services** selected in the tree pane, in the **TASKS** menu in the upper right corner, select **Refresh**.
+1. In the navigation pane, select **File and Storage Services**, and then select **Disks**.
+1. In the **Disks** pane, open the **TASKS** menu in the upper-right corner, and then select **Refresh**.
 1. Review the updated **SEA-SVR3** disk configuration with disks 2 and 3 online.
 1. Browse to the **SEA-DC1** entry and review the disk configuration.
 
@@ -208,10 +211,10 @@ This lab should take approximately **90** minutes to complete.
 
 1. In **Server Manager**, in **File and Storage Services**, select **iSCSI**, select **Tasks**, and then, in the drop-down menu, select **New iSCSI Virtual Disk**.
 1. In the **New iSCSI Virtual Disk Wizard**, on the **Select iSCSI virtual disk location** page, under the **SEA-SVR3** server, select the **E:** volume, and then select **Next**.
-1. In the **Specify iSCSI virtual disk name** page, in the **Name** text box, enter **iSCSIDisk1**, and then select **Next**.
+1. In the **Specify iSCSI virtual disk name** page, in the **Name** text box, enter `iSCSIDisk1`, and then select **Next**.
 1. On the **Specify iSCSI virtual disk size** page, in the **Size** text box, enter **5**. Leave all other settings with their default values and then select **Next**.
 1. On the **Assign iSCSI target** page, ensure the **New iSCSI target** radio button is selected, and then select **Next**.
-1. In the **Specify target name** page, in the **Name** field, enter **iSCSIFarm**, and then select **Next**.
+1. In the **Specify target name** page, in the **Name** field, enter `iSCSIFarm`, and then select **Next**.
 1. In the **Specify access servers** page, select the **Add** button.
 1. In the **Select a method to identify the initiator** window, select the **Browse** button.
 1. In the **Select Computer** window, in the **Enter the object name to select** text box, enter **SEA-DC1**, select **Check Names**, and then select **OK**.
@@ -229,6 +232,8 @@ This lab should take approximately **90** minutes to complete.
 
 1. Switch to the **SEA-DC1** console session, and then, if needed, sign in with the credentials provided by the instructor.
 1. If presented with the **SConfig** menu, at the **Enter number to select an option**, enter **15** and press Enter to exit to a **PowerShell** console session.
+
+   > **Note**: If the server displays a desktop instead, select **Start**, enter **Windows PowerShell**, and then select **Run as administrator**.
 1. At the **Windows PowerShell** prompt, enter the following commands, and press Enter after each, to start the iSCSI Initiator service and display the iSCSI Initiator configuration:
 
    ```powershell
@@ -238,7 +243,7 @@ This lab should take approximately **90** minutes to complete.
 
    > **Note**: The **iscsicpl** command will open an **iSCSI Initiator Properties** window.
 
-1. On **SEA-DC1**, in the **iSCSI Initiator Properties** dialog box, on the **Targets** tab, in the **Target** text box, type **SEA-SVR3.contoso.com**, and then select **Quick Connect**.
+1. On **SEA-DC1**, in the **iSCSI Initiator Properties** dialog box, on the **Targets** tab, in the **Target** text box, type `SEA-SVR3.contoso.com`, and then select **Quick Connect**.
 1. In the **Quick Connect** dialog box, note that the **Discovered target name** is **iqn.1991-05.com.microsoft:sea-svr3-iscsifarm-target**, and then select **Done**.
 1. In the **iSCSI Initiator Properties** dialog box, select **OK**.
 
@@ -300,8 +305,8 @@ This lab should take approximately **90** minutes to complete.
 1. Verify that all disks are listed with the **Online** status. In **Server Manager**, in the navigation pane, select **Storage Pools**.
 1. In **Server Manager**, in the **STORAGE POOLS** area, in the **TASKS** list, select **New Storage Pool**. 
 1. In the **New Storage Pool Wizard**, on the **Before you begin** page, select **Next**.
-1. On the **Specify a storage pool name and subsystem** page, in the **Name** text box, enter **SP1**. In the **Description** text box, enter **Storage Pool 1**. In the **Select the group of available disks (also known as a primordial pool) that you want to use** listing, select the **SEA-SVR3** entry, and then select **Next**.
-1. On the **Select physical disks for the storage pool** page, select the check boxes next to the three disks of **127 GB** size, and then select **Next**.
+1. On the **Specify a storage pool name and subsystem** page, in the **Name** text box, enter `SP1`. In the **Description** text box, enter **Storage Pool 1**. In the **Select the group of available disks (also known as a primordial pool) that you want to use** listing, select the **SEA-SVR3** entry, and then select **Next**.
+1. On the **Select physical disks for the storage pool** page, select the checkboxes next to three of the **128 GB** disks, and then select **Next**.
 1. On the **Confirm selections** page, review the settings, and then select **Create**.
 1. Select **Close**.
 
@@ -311,11 +316,11 @@ This lab should take approximately **90** minutes to complete.
 1. In the **VIRTUAL DISKS** area, select **TASKS**, and then select **New Virtual Disk**.
 1. In the **Select the storage pool** dialog box, select **SP1**, and then select **OK**.
 1. In the **New Virtual Disk Wizard**, on the **Before you begin** page, select **Next**.
-1. On the **Specify the virtual disk name** page, in the **Name** text box, enter **Three-Mirror**, and then select **Next**.
+1. On the **Specify the virtual disk name** page, in the **Name** text box, enter `Three-Mirror`, and then select **Next**.
 1. On the **Specify enclosure resiliency** page, select **Next**.
 1. On the **Select the storage layout** page, select **Mirror**, and then select **Next**.
 1. On the **Specify the provisioning type** page, select **Thin**, and then select **Next**.
-1. On the **Specify the size of the virtual disk** page, in the **Specify size** text box, enter **25**, and then select **Next**.
+1. On the **Specify the size of the virtual disk** page, in the **Specify size** text box, enter `25`, and then select **Next**.
 1. On the **Confirm selections** page, review the settings, and then select **Create**.
 1. On the **View results** page, clear the **Create a volume when this wizard closes** check box, and then select **Close**.
 1. In **Server Manager**, in the navigation pane, ensure that the **Volumes** entry is selected.
@@ -324,7 +329,7 @@ This lab should take approximately **90** minutes to complete.
 1. On the **Select the server and disk** page, select **SEA-SVR3**, select **Three-Mirror**, and then select **Next**.
 1. On the **Specify the size of the volume** page, select **Next**.
 1. On the **Assign to a drive letter or folder** page, select **Drive letter**, select **T**, and then select **Next**.
-1. On the **Select file system settings** page, in the **File system** drop-down list, select **ReFS**. In the **Volume label** text box, enter **TestData**, and then select **Next**.
+1. On the **Select file system settings** page, in the **File system** drop-down list, select **ReFS**. In the **Volume label** text box, enter `TestData`, and then select **Next**.
 1. On the **Enable Data Deduplication** page, select **Next**.
 1. On the **Confirm selections** page, select **Create**.
 1. On the **Completion** page, select **Close**.
@@ -488,6 +493,3 @@ This lab should take approximately **90** minutes to complete.
    > **Note**: It may take a few minutes for the alert to be automatically removed.
 
 1. Refresh the browser page displaying Windows Admin Center and verify that all servers are healthy.
-
-
-

@@ -29,7 +29,7 @@ This lab should take approximately **40** minutes to complete.
 1. In the **Type here to search** text box next to the **Start** button, enter **Group Policy Management**.
 1. In the list of results, select **Group Policy Management**.
 1. In the **Group Policy Management** console, expand **Forest: contoso.com**, expand **Domains**, expand **contoso.com**, right-click or access the **context** menu for the **IT** Organizational Unit (OU), and then select **Create a GPO in this domain, and Link it here**.
-1. In the **New GPO** dialog box, in the **Name** text box, enter **CredentialGuard_GPO**, and then select **OK**.
+1. In the **New GPO** dialog box, in the **Name** text box, enter `CredentialGuard_GPO`, and then select **OK**.
 1. In the **Group Policy Management** window, under **IT**, right-click or access the **context** menu for **CredentialGuard_GPO**, and then select **Edit**.
 1. In the **Group Policy Management Editor**, browse to **Computer Configuration\\Policies\\Administrative Templates\\System\\Device Guard**.
 1. Select **Turn On Virtualization Based Security**, and then select the **policy setting** link.
@@ -95,7 +95,9 @@ This lab should take approximately **40** minutes to complete.
 
    > **Note**: In the lab environment, no results will be returned.
 
-## Exercise 3: Implementing LAPS
+## Exercise 3: Implementing legacy Microsoft LAPS (Windows Server 2022 only)
+
+> **Important**: Complete **only one** of Exercises 3 and 4 in this lab environment. This exercise uses legacy Microsoft LAPS on Windows Server 2022; its installer is blocked on Windows Server 2025. For the current, recommended solution, skip this exercise and complete **Exercise 4: Implementing Windows LAPS** on Windows Server 2025 or Windows Server 2022 with the April 11, 2023 or later updates. Both exercises configure the same server, OU, and GPO. If you want to try the other option later, start with a fresh lab environment.
 
 #### Task 1: Prepare computer accounts for implementing LAPS (Local Administrator Password Solution)
 
@@ -187,3 +189,91 @@ This lab should take approximately **40** minutes to complete.
 1. Review the password assigned to SEA-SVR1 and note that it matches the one displayed in the **LAPS UI** tool.
 
    > **Note:** The value of the password is, in this case, enclosed in a pair of braces.
+
+## Exercise 4: Implementing Windows LAPS
+
+> **Important**: Complete **only one** of Exercises 3 and 4 in this lab environment. Windows LAPS is the current, recommended solution and is built into Windows Server 2025 and Windows Server 2022 with the April 11, 2023 or later updates. Exercise 3 is the legacy Microsoft LAPS alternative for Windows Server 2022 only. If you completed Exercise 3, start with a fresh lab environment before attempting this exercise; both alternatives configure the same server, OU, and GPO.
+
+Windows Local Administrator Password Solution (Windows LAPS) manages SEA-SVR1's local administrator password and backs it up to Active Directory. Don't install the legacy **LAPS.x64.msi** package for this exercise.
+
+> **Important**: Use **CONTOSO\Administrator** for this exercise, not a local Administrator account. Preparing the schema requires membership in **Schema Admins**; configuring permissions requires appropriate domain administrative rights. Password encryption requires a Windows Server 2016 or later domain functional level. **SEA-SVR1** must be a domain member server, not a domain controller.
+
+#### Task 1: Prepare the computer account for Windows LAPS
+
+1. On **SEA-SVR2**, sign in as **CONTOSO\Administrator**. Select **Start**, enter **Windows PowerShell**, and then select **Run as administrator**.
+1. Run the following commands to confirm that the Windows LAPS module is available and review the domain functional level:
+
+   ```powershell
+   Get-Command -Module LAPS
+   Get-ADDomain | Select-Object DNSRoot,DomainMode
+   ```
+
+   > **Note**: If the LAPS module is unavailable or the domain functional level is earlier than Windows Server 2016, stop and contact your instructor. Don't raise the domain functional level as part of this exercise.
+
+1. Create an OU and move the **SEA-SVR1** computer account into it:
+
+   ```powershell
+   New-ADOrganizationalUnit -Name "Seattle_Servers"
+   Get-ADComputer SEA-SVR1 | Move-ADObject -TargetPath "OU=Seattle_Servers,DC=Contoso,DC=com"
+   ```
+
+#### Task 2: Prepare AD DS and configure Windows LAPS policy
+
+1. On **SEA-SVR2**, in the elevated Windows PowerShell window, run the following commands one at a time. When `Update-LapsADSchema` prompts you to add schema attributes, enter **A** (**Yes to All**) and press Enter. After the schema update completes without errors, run the permission command:
+
+   ```powershell
+   Import-Module LAPS
+   Update-LapsADSchema
+   Set-LapsADComputerSelfPermission -Identity "OU=Seattle_Servers,DC=contoso,DC=com"
+   ```
+
+   > **Note**: The schema update is a one-time forest operation. The permission command allows computers in this OU to update their own Windows LAPS password attributes. Domain Admins already have password retrieval rights and are the default authorized decryptors.
+
+1. On **SEA-SVR2**, select **Start**, enter **Group Policy Management**, and then open **Group Policy Management**.
+1. In the **Group Policy Management** console, expand **Forest: contoso.com**, expand **Domains**, expand **contoso.com**, right-click or access the **context** menu for the **Seattle_Servers** OU, and then select **Create a GPO in this domain, and Link it here**.
+1. In the **New GPO** dialog box, in the **Name** text box, enter `LAPS_GPO`, and then select **OK**.
+1. In the **Group Policy Management** window, under **Seattle_Servers**, right-click or access the **context** menu for **LAPS_GPO**, and then select **Edit**.
+1. In **Group Policy Management Editor**, browse to **Computer Configuration\Policies\Administrative Templates\System\LAPS**.
+1. Open **Configure password backup directory**, select **Enabled**, select **Active Directory** as the backup directory, and then select **OK**.
+1. Open **Password Settings**, select **Enabled**, set **Password Length** to **20** and **Password Age (Days)** to **30**, and then select **OK**. Leave password complexity at its default value.
+1. Open **Enable password encryption**, select **Enabled**, and then select **OK**.
+
+   > **Note**: Leave **Name of administrator account to manage** and automatic account management settings **Not Configured**. Windows LAPS manages the existing built-in local administrator account by its identifier, even if it has been renamed. Leave **Configure authorized password decryptors** **Not Configured** to use the default Domain Admins group.
+
+1. Close the Group Policy Management Editor.
+
+#### Task 3: Apply Windows LAPS policy on SEA-SVR1
+
+1. Switch to the console session for **SEA-SVR1**, and sign in as **CONTOSO\Administrator**.
+
+   > **Important**: Windows LAPS changes the password of SEA-SVR1's local administrator account, not the domain Administrator account. Continue using **CONTOSO\Administrator** for lab administration.
+
+1. If the **SConfig** menu appears, enter **15** and press Enter to open PowerShell. If a desktop appears instead, select **Start**, enter **Windows PowerShell**, and then select **Run as administrator**.
+1. Run the following commands to refresh Group Policy and process Windows LAPS policy:
+
+   ```powershell
+   gpupdate /force
+   Invoke-LapsPolicyProcessing
+   ```
+
+1. Review the latest Windows LAPS events:
+
+   ```powershell
+   Get-WinEvent -LogName 'Microsoft-Windows-LAPS/Operational' -MaxEvents 10 | Format-List TimeCreated,Id,Message
+   ```
+
+   > **Note**: Event **10018** records a successful password backup to Active Directory, and event **10004** records successful policy processing. If processing fails, review the event messages and resolve the reported error before continuing.
+
+#### Task 4: Retrieve the Windows LAPS password
+
+1. Switch to **SEA-SVR2**. In an elevated Windows PowerShell window running as **CONTOSO\Administrator**, run:
+
+   ```powershell
+   Get-LapsADPassword -Identity SEA-SVR1 -AsPlainText
+   ```
+
+1. Review **ComputerName**, **Account**, **Password**, and **ExpirationTimestamp**. Verify that **Source** is **EncryptedPassword** and **DecryptionStatus** is **Success**.
+
+   > **Important**: The `-AsPlainText` parameter displays the managed password. Don't include it in screenshots, reports, or shared notes. Without this parameter, the cmdlet returns the password as a secure string.
+
+   > **Note**: If no password is returned, confirm that policy processing succeeded on SEA-SVR1 and allow time for AD replication before retrying. An access or decryption error requires checking the account's permissions rather than reinstalling LAPS.

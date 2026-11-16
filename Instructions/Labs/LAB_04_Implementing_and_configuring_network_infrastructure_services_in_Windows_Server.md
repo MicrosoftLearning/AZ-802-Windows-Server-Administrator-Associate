@@ -24,6 +24,11 @@ This lab should take approximately **60** minutes to complete.
 
 1. Connect to **SEA-ADM1**, and then, if needed, sign in with the credentials provided by the instructor.
 1. On **SEA-ADM1**, select **Start**, and then select **Windows PowerShell (Admin)**.
+1. In the **Windows PowerShell** console, enter the following command, and then press Enter to use **C:\Allfiles** as the working folder for downloading and running the installer:
+
+   ```powershell
+   Set-Location C:\Allfiles
+   ```
 
    >**Note**: Perform the next two steps to install Windows Admin Center on **SEA-ADM1**.
 
@@ -71,9 +76,13 @@ This lab should take approximately **60** minutes to complete.
 1. Select the **DHCP** and **DNS** extensions, and then select **Install** if not installed already. The extension will install and Windows Admin Center will refresh.
 1. In the details pane, select **Installed extensions** and verify that the list includes the extensions you just installed.
 1. In the All connections pane, select **+ Add**.
+1. Select **Add manually**.
 1. In the Add or create resources pane, on the **Servers** tile, select **Add**.
-1. In the **Server name** text box, enter **sea-svr1.contoso.com**. 
-1. Ensure that **Use another account for this connection** option is selected, enter the credentials provided by the instructor, and then select **Add with credentials**.
+1. In the **Server name** text box, enter `sea-svr1.contoso.com`. 
+1. Select **Add**.
+1. On the **All connections** page, select **sea-svr1.contoso.com**, and then select **Connect**.
+
+   > **Note**: If prompted for credentials, enter **CONTOSO\Administrator** and the password provided by the instructor.
 
    > **Note**: To perform single sign-on, you would need to set up a Kerberos constrained delegation.
 
@@ -108,11 +117,11 @@ This lab should take approximately **60** minutes to complete.
 1. In the Create a new scope pane, specify the following settings, and then select **Create**.
 
    - Protocol: **IPv4**
-   - Name: **ContosoClients**
-   - Starting IP address: **10.100.150.50**
-   - Ending IP address: **10.100.150.254**
-   - DHCP client subnet mask: **255.255.255.0**
-   - Router (default gateway): **10.100.150.1**
+   - Name: `ContosoClients`
+   - Starting IP address: `10.100.150.50`
+   - Ending IP address: `10.100.150.254`
+   - DHCP client subnet mask: `255.255.255.0`
+   - Router (default gateway): `10.100.150.1`
    - Lease duration for DHCP clients: **4 days**
 
 1. On **SEA-ADM1**, switch to **Server Manager**, in **Server Manager**, select **Tools**, and then select **DHCP**.
@@ -141,12 +150,12 @@ This lab should take approximately **60** minutes to complete.
    - Addresses reserved for standby server: **5%**
    - State Switchover Interval: **Disabled**
    - Enable Message Authentication: **Enabled**
-   - Shared Secret: **DHCP-Failover**
+   - Shared Secret: `DHCP-Failover`
 
 1. Select **Finish**.
 1. In the **Configure Failover** dialog box, select **Close**.
 1. Under **sea-svr1**, select **IPv4**, and then verify that only one scope is listed.
-1. In the **DHCP** window, in the Actions pane, select **More Actions**, and then select **Add Server**.
+1. In the **DHCP** window, in the navigation pane, select the top-level **DHCP** node. In the Actions pane, select **More Actions**, and then select **Add Server**.
 1. In the **Add Server** dialog box, select **This authorized DHCP server**, select **sea-dc1.contoso.com**, and then select **OK**.
 1. On **SEA-ADM1**, in the **DHCP** window, expand the **sea-dc1** node, select **IPv4**, and then verify that two scopes are listed.
 1. Select **Scope [172.16.0.0] Contoso**, in the Actions pane, select **More Actions**, and then select **Configure Failover**.
@@ -158,9 +167,8 @@ This lab should take approximately **60** minutes to complete.
 
 #### Task 5: Verify DHCP functionality
 
-1. On **SEA-ADM1**, select **Start**, and then select **Settings**.
-1. In the **Settings** window, select **Network & Internet**, and then select **Network and Sharing Center**.
-1. In **Network and Sharing Center**, select **Ethernet**, and then select **Properties**.
+1. On **SEA-ADM1**, press **Windows+R**, enter `ncpa.cpl`, and then press Enter to open **Network Connections**.
+1. In **Network Connections**, double-click **Ethernet** to open **Ethernet Status**, and then select **Properties**.
 1. In the **Ethernet Properties** dialog box, select **Internet Protocol Version 4 (TCP/IPv4)**, and then select **Properties**.
 1. In the **Internet Protocol Version 4 (TCP/IPv4) Properties** dialog box, select **Obtain an IP address automatically**, select **Obtain DNS server address automatically**, and then select **OK**.
 1. Select **Close**, and then, in the **Ethernet Status** window, select **Details**.
@@ -172,7 +180,7 @@ This lab should take approximately **60** minutes to complete.
 1. Verify that here as well there is an entry representing the **SEA-ADM1.contoso.com** lease.
 1. Select **sea-svr1 **, in the Actions pane, select **More Actions**, select **All tasks**, and then select **Stop**.
 1. On **SEA-ADM1**, switch back to the **Ethernet Status** window, and then select **Disable**.
-1. Back in the **Network and Sharing Center** window, select **Change adapter settings**, select **Ethernet**, and then select **Enable this network device**.
+1. Return to **Network Connections**, select **Ethernet**, and then select **Enable this network device**. If necessary, press **Windows+R**, enter `ncpa.cpl`, and then press Enter to reopen **Network Connections**.
 1. Double-click the enabled **Ethernet** connection to display its status window.
 1. In the **Ethernet Status** window, select **Details**.
 1. In the **Network Connection Details** dialog box, verify that DHCP is enabled, an IP address was obtained, and that the **SEA-DC1 (172.16.10.10)** DHCP server issued the lease.
@@ -320,6 +328,3 @@ This lab should take approximately **60** minutes to complete.
 1. In the **Internet Protocol Version 4 (TCP/IPv4) Properties** dialog box, change the currently assigned IP address (**172.16.11.11**) to its original value (**172.16.10.11**) and select **OK**.
 1. Select **Close** twice.
 1. Close all open windows.
-
-
-

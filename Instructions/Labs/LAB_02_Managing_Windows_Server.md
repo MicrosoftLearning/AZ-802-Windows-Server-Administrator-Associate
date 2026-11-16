@@ -24,6 +24,12 @@ This lab should take approximately **45** minutes to complete.
 
 1. Connect to **SEA-ADM1**, and if needed, sign in with the credentials provided by the instructor.
 1. On **SEA-ADM1**, select **Start**, and then select **Windows PowerShell (Admin)**.
+1. In the **Windows PowerShell** console, enter the following command, and then press Enter to use **C:\Allfiles** as the working folder for downloading and running the installer:
+
+   ```powershell
+   Set-Location C:\Allfiles
+   ```
+
 1. In the **Windows PowerShell** console, enter the following command, and then press Enter to download the latest version of Windows Admin Center:
 	
    ```powershell
@@ -68,8 +74,9 @@ This lab should take approximately **45** minutes to complete.
 1. Review the **New in this release** pop-up window and select **Close** in its upper-right corner.
 1. Review the **All connections** page and note that it includes the **sea-adm1.contoso.com** entry. 
 1. On the **All connections** page, select **+ Add**. 
+1. Select **Add manually**.
 1. In the Add or create resources pane, on the **Servers** tile, select **Add**.
-1. In the **Server name** text box, enter **sea-dc1.contoso.com**.
+1. In the **Server name** text box, enter `sea-dc1.contoso.com`.
 1. When prompted, sign in by using the credentials provided by the instructor.
 
    > **Note**: To perform single sign-on, you would need to set up Kerberos constrained delegation.
@@ -83,7 +90,7 @@ This lab should take approximately **45** minutes to complete.
 1. On the top menu, next to **Settings**, select the drop-down arrow, and then select **Server Manager**.
 1. On the **Server connections** page, select the **sea-dc1.contoso.com** link.
 
-1. To install the DNS PowerShell tools, in the left pane, in the list of **Tools**, select **DNS**, and then select **Install**. The tools will take less than a minute to install.
+1. In the left pane, in the list of **Tools**, select **DNS**. If prompted, select **Install** to install the DNS PowerShell tools, and wait for the installation to complete.
 1. Select the **Contoso.com** zone and review the list of its DNS records.
 
 #### Task 4: Verify remote administration
@@ -91,7 +98,7 @@ This lab should take approximately **45** minutes to complete.
 1. On **SEA-ADM1**, in Windows Admin Center, in the left pane, in the list of **Tools**, select **Overview**. Note that the details pane of Windows Admin Center displays basic server information and performance monitoring.
 1. In the left pane, in the list of **Tools**, scroll down and review the basic administration tools available. Select **Roles & features** and note which roles and features are listed as installed and which ones are available to install. Scroll down, select the **Telnet Client** checkbox, and then select **+ Install** at the top of the pane.
 1. In the **Install Roles and Features** pane, select **Yes** and wait for the message confirming that Telnet Client was installed successfully.
-1. At the very top of the left pane, below the list of **Tools**, select **Settings**.
+1. At the top of the left pane, above the list of **Tools**, select **Settings**.
 1. In the **Settings** section on the right side, select **Remote Desktop**.
 1. In the **Remote Desktop** section, select the option **Allow remote connections to this computer** checkbox, and then select **Save**.
 1. In the left pane, in the list of **Tools**, select **Remote Desktop**.
@@ -133,6 +140,3 @@ This lab should take approximately **45** minutes to complete.
 ### Results
 
 After completing this exercise, you will have installed Windows Admin Center and connected it to the servers in your lab environment. You performed a number of remote management tasks including installing a feature as well as enabling and testing Remote Desktop connectivity. Finally, you used PowerShell Remoting to check the status of a service and then to start it.
-
-
-

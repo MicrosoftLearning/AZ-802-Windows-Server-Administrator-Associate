@@ -31,7 +31,7 @@ This lab should take approximately **60** minutes to complete.
 1. In the **Virtual Switch Manager**, in the **Create virtual switch** pane, select **Private**, and then select **Create Virtual Switch**.
 1. In the **Virtual Switch Properties** box, specify the following settings, and then select **OK**:
 
-   - Name: **Contoso Private Switch**
+   - Name: `Contoso Private Switch`
    - Connection type: **Private network**
 
 #### Task 2: Create a virtual hard disk
@@ -42,18 +42,18 @@ This lab should take approximately **60** minutes to complete.
 1. On the **Choose Disk Type** page, select **Differencing**, and then select **Next**.
 1. On the **Specify Name and Location** page, specify the following settings, and then select **Next**:
 
-   - Name: **SEA-VM1**
-   - Location: **C:\Base**
+   - Name: `SEA-VM1`
+   - Location: `C:\Base`
 
-1. On the **Configure Disk** page, in the **Location** box, enter **C:\Base\BaseImage.vhd**, and then select **Next**.
+1. On the **Configure Disk** page, in the **Location** box, enter `C:\Base\BaseImage.vhd`, and then select **Next**.
 1. On the **Summary** page, select **Finish**.
 
 #### Task 3: Create a virtual machine
 
 1. On **SEA-ADM1**, in Hyper-V Manager, verify that **SEA-SVR1.CONTOSO.COM** is selected. In the **Actions** pane, under **SEA-SVR1.CONTOSO.COM**, select **New**, and then select **Virtual Machine**. The **New Virtual Machine Wizard** starts.
 1. On the **Before You Begin** page, select **Next**.
-1. On the **Specify Name and Location** page, enter **SEA-VM1**, and then select the check box next to **Store the virtual machine in a different location**.
-1. In the **Location** box, enter **C:\Base**, and then select **Next**.
+1. On the **Specify Name and Location** page, enter `SEA-VM1`, and then select the check box next to **Store the virtual machine in a different location**.
+1. In the **Location** box, enter `C:\Base`, and then select **Next**.
 1. On the **Specify Generation** page, select **Generation 1**, and then select **Next**.
 1. On the **Assign Memory** page, enter **4096**, and then select **Next**.
 1. On the **Configure Networking** page, select the Connection drop-down menu, select **Contoso Private Switch**, and then select **Next**.
@@ -63,12 +63,17 @@ This lab should take approximately **60** minutes to complete.
 1. Select **SEA-VM1**, and then in the Actions pane, under **SEA-VM1**, select **Settings**.
 1. In the **Hardware** list, select **Memory**.
 1. In the **Dynamic Memory** section, select the check box next to **Enable Dynamic Memory**.
-1. Next to **Maximum RAM**, enter **4096**, and then select **OK**.
+1. Next to **Maximum RAM**, enter `4096`, and then select **OK**.
 1. Close Hyper-V Manager.
 
 #### Task 4: Manage Virtual Machines using Windows Admin Center
 
 1. On **SEA-ADM1**, select **Start**, and then select **Windows PowerShell (Admin)**.
+1. In the **Windows PowerShell** console, enter the following command, and then press Enter to use **C:\Allfiles** as the working folder for downloading and running the installer:
+
+   ```powershell
+   Set-Location C:\Allfiles
+   ```
 
    >**Note**: Perform the next two steps to install Windows Admin Center on **SEA-ADM1**.
 
@@ -115,18 +120,22 @@ This lab should take approximately **60** minutes to complete.
 1. Review the **New in this release** pop-up window and select **Close** in its upper-right corner.
 
 1. On the **All connections** pane, select **+ Add**.
+1. Select **Add manually**.
 1. On the **Add or create resources** pane, on the **Servers** tile, select **Add**.
-1. In the **Server name** text box, enter **sea-svr1.contoso.com**.
-1. Ensure that the **Use another account for this connection** option is selected, enter with the credentials provided by the instructor, and then select **Add with credentials**:
+1. In the **Server name** text box, enter `sea-svr1.contoso.com`.
+1. Select **Add**.
+1. On the **All connections** page, select **sea-svr1.contoso.com**, and then select **Connect**.
 
-   > **Note**: After performing step 8, if an error message that says **You can add this server to your list of connections, but we can't confirm it's available.** appears, select **Add**. In the All Connections pane,  select **sea-svr1.contoso.com**, and then select **Manage as**. In the **Specify your credentials** dialog box, ensure that the **Use another account for this connection** option is selected, enter the Administrator credentials, and then select **Continue**.
+   > **Note**: If prompted for credentials, enter **CONTOSO\Administrator** and the password provided by the instructor.
 
    > **Note**: To perform single sign-on, you would need to set up Kerberos constrained delegation.
 
-1. On the **sea-svr1.contoso.com** page, in the **Tools** list, select **Virtual machines**, select the **Summary** tab, and then review its content.
+1. On the **sea-svr1.contoso.com** page, in the **Tools** list, select **Virtual machines**.
+1. If necessary, select **Detailed mode** to display the **Summary** and **Inventory** tabs.
+1. Select the **Summary** tab, and then review its content.
 1. Select the **Inventory** tab and verify that it contains SEA-VM1.
 1.  Select **SEA-VM1** and review its Properties pane.
-1. Select **Settings**, and then select **Disks**.
+1. Select **Settings**, and then select **Disks**. If **Settings** isn't visible, select the ellipsis (**...**) menu to find it.
 1. Scroll to the bottom of the pane and select **+ Add disk**.
 1. Select **New Virtual Hard Disk**.
 1. On the **New Virtual Hard Disk** pane, in the **Size (GB)** text box, type **5**, leave other settings with their default values, and then select **Create**.
@@ -144,11 +153,19 @@ After this exercise, you should have used Hyper-V Manager and Windows Admin Cent
 
 #### Task 1: Install Docker on Windows Server
 
-1. On **SEA-ADM1**, in the **Tools** listing for **SEA-SVR1**, select **PowerShell**. When prompted, authenticate with the credentials provided by the instructor, and then press Enter. 
+1. On **SEA-ADM1**, in Windows Admin Center, return to the **Overview** page for **sea-svr1.contoso.com**.
+1. On **SEA-ADM1**, in the **Tools** listing for **SEA-SVR1**, select **PowerShell**. If prompted, authenticate with the credentials provided by the instructor, and then press Enter.
 
    > **Note**: This establishes a PowerShell Remoting connection to SEA-SVR1.
 
    > **Note**: The Powershell connection in Windows Admin Center may be relatively slow due to nested virtualization used in the lab, so an alternate method is to run `Enter-PSSession -ComputerName SEA-SVR1` from a Windows Powershell console on **SEA-ADM1**.
+
+1. In the PowerShell session connected to **SEA-SVR1**, run the following commands to create **C:\Allfiles** if it doesn't exist and use it as the working folder:
+
+   ```powershell
+   New-Item -Path C:\Allfiles -ItemType Directory -Force
+   Set-Location C:\Allfiles
+   ```
 
 1. In the **Windows PowerShell** console, enter the following commands, and then press Enter to install the Docker CE (Community Edition) on **SEA-SVR1**:
 
@@ -168,7 +185,15 @@ After this exercise, you should have used Hyper-V Manager and Windows Admin Cent
 
 1. After **SEA-SVR1** restarts, use the PowerShell tool again to establish a new PowerShell Remoting session to **SEA-SVR1**.
 
-   > **Note**: For the remaining steps in this task, you will need to run interactive Docker commands that require a TTY-capable terminal. The PowerShell console in Windows Admin Center does not support TTY. Therefore, it is recommended to use the alternative method: open **Windows PowerShell** as Administrator on **SEA-ADM1** and run `Enter-PSSession -ComputerName SEA-SVR1` to establish a PowerShell Remoting session.
+   > **Note**: Run all commands in this task in the PowerShell session connected to **SEA-SVR1**. The container commands run without an interactive terminal and work in the Windows Admin Center PowerShell tool or an `Enter-PSSession` session.
+
+1. In the session connected to **SEA-SVR1**, run the following command to return to the working folder:
+
+   ```powershell
+   Set-Location C:\Allfiles
+   ```
+
+   > **Note**: After each restart or reconnection, return to **C:\Allfiles** before continuing host-side PowerShell commands on **SEA-SVR1**.
 
 1. In the **Windows PowerShell** console, enter the following command, and then press Enter to identify Docker images currently present on **SEA-SVR1**: 
 
@@ -192,41 +217,22 @@ After this exercise, you should have used Hyper-V Manager and Windows Admin Cent
    docker images
    ```
 
-1. Enter the following command, and then press Enter to launch a container based on the downloaded image:
+1. In the PowerShell session connected to **SEA-SVR1**, run the following command to start a container, display its hostname, and create **Hello.txt** inside it:
 
    ```powershell
-   docker run -it mcr.microsoft.com/windows/nanoserver:ltsc2022 cmd.exe 
+   docker run mcr.microsoft.com/windows/nanoserver:ltsc2022 cmd.exe /s /c "hostname & echo Hello World! > C:\Users\Public\Hello.txt"
    ```
 
-   > **Note**: The docker command starts a container and connects you to the command line interface of the container. 
+   > **Note**: The displayed hostname belongs to the container, not **SEA-SVR1**. The container stops automatically after creating the file, and control returns to the PowerShell prompt on **SEA-SVR1**. Don't enter `exit`, because that would close your remote PowerShell session.
 
-1. Enter the following command, and then press Enter to retrieve the IP address information of the container host:
-
-   ```powershell
-   hostname
-   ```
-    > **Note**: Verify this is the hostname of the container instance, not **SEA-SVR1**.
-
-1. Enter the following command, and then press Enter to create a text file in the container:
-
-   ```powershell
-   echo "Hello World!" > C:\Users\Public\Hello.txt
-   ```
-
-1. Enter the following command, and then press Enter to exit the command line interface of the container and return to the PowerShell prompt on **SEA-SVR1**:
-
-   ```powershell
-   exit
-   ```
-
-1. Enter the following command, and then press Enter get the container ID for the container you just exited by running the docker ps command:
+1. To find the ID of the container you just created, run the following command on **SEA-SVR1**:
 
    ```powershell
    docker ps -a
    ```
    > **Note**: The `-a` switch lists all containers, including those that are not currently running.
 
-1. Create a new helloworld image that includes the changes in the first container you ran. To do so, run the docker commit command, replacing \<containerID\> with the ID of your container:
+1. Create a new **helloworld** image that includes the file you added. Run the following command, replacing \<containerID\> with the **CONTAINER ID** of the container you just created:
 
    ```powershell
    docker commit <containerID> helloworld
@@ -250,7 +256,7 @@ After this exercise, you should have used Hyper-V Manager and Windows Admin Cent
    ```powershell
    docker run --rm mcr.microsoft.com/windows/nanoserver:ltsc2022 cmd.exe /s /c type C:\Users\Public\Hello.txt
    ```
-   > **Note**: The original image was not modified by adding a file and reverted back to its original state after stopping.
+   > **Note**: Expect the message **The system cannot find the file specified.** The original Nano Server image doesn't contain **Hello.txt**. The file exists only in the **helloworld** image you created with `docker commit`. This error is expected and confirms that the original image remains unchanged.
 
 
 #### Task 3: Use Windows Admin Center to manage containers
@@ -266,6 +272,3 @@ After this exercise, you should have used Hyper-V Manager and Windows Admin Cent
 ### Exercise 2 results
 
 After this exercise, you should have installed Docker on Windows Server, downloaded a Windows container image containing web services, and verified its functionality.
-
-
-

@@ -60,38 +60,16 @@ This lab should take approximately **45** minutes to complete.
 
 1. On the **Additional Options** page, select **Next**.
 1. On the **Paths** page, keep the default path settings for the **Database** folder, **Log files** folder, and **SYSVOL** folder, and then select **Next**.
-1. To open the generated Windows PowerShell script, on the **Review Options** page, select **View script**.
-1. In Notepad, edit the generated Windows PowerShell script:
-
-   - Delete the comment lines that begin with the number sign (**#**).
-   - Remove the **Import-Module** line.
-   - Remove the grave accents (**`**) at the end of each line.
-   - Remove the line breaks, retaining a space between each parameter.
-
-1. Now the **Install-ADDSDomainController** command and all the parameters are on one line. Place the cursor in front of the line, and then, on the **Edit** menu, select **Select All** to select the whole line. On the menu, select **Edit**, and then select **Copy**.
-
-1. Switch back to the **Active Directory Domain Services Configuration Wizard**, select **Cancel**, and then, when prompted for confirmation, select **Yes**.
-1. At the Windows PowerShell command prompt, enter the following command:
-
-   ```powershell
-   Invoke-Command -ComputerName SEA-SVR1 { }
-   ```
-1. Place the cursor between the braces (**{ }**), and then paste the content of the copied script line from the clipboard. The complete command should have the following format:
-	
-   ```powershell
-   Invoke-Command -ComputerName SEA-SVR1 {Install-ADDSDomainController -NoGlobalCatalog:$false -CreateDnsDelegation:$false -Credential (Get-Credential) -CriticalReplicationOnly:$false -DatabasePath "C:\Windows\NTDS" -DomainName "Contoso.com" -InstallDns:$true -LogPath "C:\Windows\NTDS" -NoRebootOnCompletion:$false -SiteName "Default-First-Site-Name" -SysvolPath "C:\Windows\SYSVOL" -Force:$true}
-   ```
-1. To invoke the command, press Enter.
-1. In the **Windows PowerShell Credential Request** dialog box, enter the credentials provided by the instructor.
-1. When prompted for the password, in the **SafeModeAdministratorPassword** text box, enter **Pa55w.rd**, and then press Enter.
-1. When prompted for confirmation, in the **Confirm SafeModeAdministratorPassword** text box, enter **Pa55w.rd**, and then press Enter.
-1. Wait until the command runs and the **Status Success** message is returned. The **SEA-SVR1** virtual machine restarts.
-1. Close Notepad without saving the file.
+1. On the **Review Options** page, review the configuration settings, and then select **Next**.
+1. On the **Prerequisites Check** page, wait for validation to finish. Verify that all prerequisite checks pass, and then select **Install**. The DNS delegation warning described earlier is expected. If a prerequisite check fails, resolve the error before continuing.
+1. Wait for the wizard to report that **SEA-SVR1** was successfully configured as a domain controller. **SEA-SVR1** restarts automatically to complete the installation. Leave **SEA-ADM1** and **SEA-DC1** running during promotion and wait for **SEA-SVR1** to finish restarting.
 1. After **SEA-SVR1** restarts, on **SEA-ADM1**, switch to **Server Manager**, and on the left side, select the **AD DS** node. Note that **SEA-SVR1** has been added as a server and that the warning notification has disappeared.
 
    > **Note**: You might have to select **Refresh**.
 
 #### Task 3: Manage objects in AD DS
+
+Use **SEA-DC1** for the Active Directory commands in this task so that each operation uses the same domain controller.
 
 1. Ensure that you are connected to the console session of **SEA-ADM1**.
 1. Switch to **Windows PowerShell (Admin)**.
@@ -103,12 +81,12 @@ This lab should take approximately **45** minutes to complete.
 1. To create a user account for **Ty Carlson** in the **Seattle** OU, enter the following command, and then press Enter:
 
    ```powershell
-   New-ADUser -Name Ty -DisplayName 'Ty Carlson' -GivenName Ty -Surname Carlson -Path 'OU=Seattle,DC=contoso,DC=com'
+   New-ADUser -Name Ty -DisplayName 'Ty Carlson' -GivenName Ty -Surname Carlson -Path 'OU=Seattle,DC=contoso,DC=com' -Server SEA-DC1.contoso.com
    ```
 1. To set the password for the Ty's user account, enter the following command, and then press Enter:
 
    ```powershell
-   Set-ADAccountPassword Ty
+   Set-ADAccountPassword Ty -Server SEA-DC1.contoso.com
    ```
 1. When you receive a prompt for the current password, press Enter.
 1. When you receive a prompt for the desired password, enter **Pa55w.rd**, and then press Enter.
@@ -116,22 +94,22 @@ This lab should take approximately **45** minutes to complete.
 1. To enable the account, enter the following command, and then press Enter:
 
    ```powershell
-   Enable-ADAccount Ty
+   Enable-ADAccount Ty -Server SEA-DC1.contoso.com
    ```
 1. To create a domain global group named **SeattleBranchUsers**, enter the following command, and then press Enter:
 
    ```powershell
-   New-ADGroup SeattleBranchUsers -Path 'OU=Seattle,DC=contoso,DC=com' -GroupScope Global -GroupCategory Security
+   New-ADGroup SeattleBranchUsers -Path 'OU=Seattle,DC=contoso,DC=com' -GroupScope Global -GroupCategory Security -Server SEA-DC1.contoso.com
    ```
 1. To add the **Ty** user account to the newly created group, enter the following command, and then press Enter:
 
    ```powershell
-   Add-ADGroupMember -Identity SeattleBranchUsers -Members Ty
+   Add-ADGroupMember -Identity SeattleBranchUsers -Members Ty -Server SEA-DC1.contoso.com
    ```
 1. To confirm that the user is in the group, enter the following command, and then press Enter:
 
    ```powershell
-   Get-ADGroupMember -Identity SeattleBranchUsers
+   Get-ADGroupMember -Identity SeattleBranchUsers -Server SEA-DC1.contoso.com
    ```
 1. To add the user to the local Administrators group, enter the following command, and then press Enter:
 
@@ -218,7 +196,7 @@ This lab should take approximately **45** minutes to complete.
 
    > **Note**: Group Policy requires each computer account to have permissions to read GPO data from domain controllers to successfully apply the user GPO settings. You should keep it in mind when modifying security filtering settings of a GPO.
 
-1. In the details pane, select **Add**.
+1. On the **Scope** tab, in the **Security Filtering** section, select **Add**.
 1. In the **Select User, Computer, or Group** dialog box, in the **Enter the object name to select (examples):** text box, enter **SeattleBranchUsers**, and then select **OK**.
 1. In the details pane, under **Security Filtering**, select **Add**.
 1. In the **Select User, Computer, or Group** dialog box, select **Object Types**.
@@ -242,11 +220,11 @@ This lab should take approximately **45** minutes to complete.
 1. On the **WMI Filters for Computers** page, accept the default settings, and then select **Next**.
 1. On the **Summary of Selections** page, select **Next**.
 1. Select **Finish** when prompted.
+
+   > **Note**: If an Internet Explorer Enhanced Security Configuration dialog displays a blocked-content warning for `about:security_mmc.exe`, select **Close**, and then continue to the report's **Details** tab. Leave Internet Explorer Enhanced Security Configuration enabled.
+
 1. In the details pane, select the **Details** tab, and then select **show all**.
 1. In the report, scroll down until you locate the **User Details** section, and then locate the **Control Panel/Personalization** section. Note that the **Screen saver timeout** settings are disabled and the winning GPO is set to Seattle Application Override GPO.
 1. Close the **Group Policy Management** console.
 
 **Results**: After this exercise, you should have successfully created and configured GPOs.
-
-
-
